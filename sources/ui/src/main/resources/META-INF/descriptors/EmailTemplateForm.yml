@@ -1,0 +1,20 @@
+view: form
+beanClass: tools.dynamia.modules.email.domain.EmailTemplate
+autofields: false
+
+
+fields:
+   name:
+   description:
+      params:
+          multiline: true
+          height: 40px
+   subject:
+   content:      
+      component: richeditor
+      params:          
+          height: 400px;
+   enabled:
+          
+layout:
+   columns: 1

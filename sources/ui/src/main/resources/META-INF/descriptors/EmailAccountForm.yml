@@ -1,0 +1,13 @@
+view: form
+beanClass: tools.dynamia.modules.email.domain.EmailAccount
+hidden: [id,preferred,site]
+sortFields: [name,username,password,serverAddress,port,fromAddress,useTTLS,loginRequired,enconding]
+
+
+fields:
+   useTTLS:
+       label: TTLS
+       
+   username:
+       params:
+           span: 2

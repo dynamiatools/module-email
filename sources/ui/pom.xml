@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>tools.dynamia.modules.email.parent</artifactId>
+		<groupId>tools.dynamia.modules</groupId>
+		<version>1.0.0</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<name>DynamiaModules - Email UI(${project.version})</name>
+	<groupId>tools.dynamia.modules</groupId>
+	<artifactId>tools.dynamia.modules.email.ui</artifactId>
+	<version>1.0.0</version>
+	<url>http://www.dynamiasoluciones.com</url>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>tools.dynamia</groupId>
+			<artifactId>tools.dynamia.zk.crud</artifactId>
+			<version>${dynatools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>tools.dynamia.modules</groupId>
+			<artifactId>tools.dynamia.modules.email</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<encoding>${source.encoding}</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
