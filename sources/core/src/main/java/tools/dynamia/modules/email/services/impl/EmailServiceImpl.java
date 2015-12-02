@@ -45,6 +45,9 @@ public class EmailServiceImpl implements EmailService {
 	@Autowired
 	private CrudService crudService;
 
+	@Autowired
+	private AccountServiceAPI accountServiceAPI;
+
 	private VelocityEngine velocityEngine = new VelocityEngine();
 
 	private final LoggingService logger = new SLF4JLoggingService(EmailService.class);
@@ -72,60 +75,57 @@ public class EmailServiceImpl implements EmailService {
 
 		final EmailAccount finalAccount = account;
 
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
+		Thread thread = new Thread(() -> {
+			try {
 
-					if (mailMessage.getTemplate() != null) {
-						processTemplate(mailMessage);
-					}
-
-					JavaMailSenderImpl jmsi = (JavaMailSenderImpl) createMailSender(finalAccount);
-					MimeMessage mimeMessage = jmsi.createMimeMessage();
-
-					MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-					helper.setTo(mailMessage.getTo());
-					if (!mailMessage.getTos().isEmpty()) {
-						helper.setTo(mailMessage.getTosAsArray());
-					}
-					String from = finalAccount.getFromAddress();
-					String personal = finalAccount.getName();
-					if (from != null && personal != null) {
-						helper.setFrom(from, personal);
-					}
-
-					if (!mailMessage.getBccs().isEmpty()) {
-						helper.setBcc(mailMessage.getBccsAsArray());
-					}
-
-					if (!mailMessage.getCcs().isEmpty()) {
-						helper.setCc(mailMessage.getCcsAsArray());
-					}
-
-					helper.setSubject(mailMessage.getSubject());
-					if (mailMessage.getPlainText() != null && mailMessage.getContent() != null) {
-						helper.setText(mailMessage.getPlainText(), mailMessage.getContent());
-					} else {
-						helper.setText(mailMessage.getContent(), true);
-					}
-
-					for (File archivo : mailMessage.getAttachtments()) {
-						helper.addAttachment(archivo.getName(), archivo);
-					}
-
-					fireOnMailSending(mailMessage);
-					logger.info("Sending e-mail " + mailMessage);
-					jmsi.send(mimeMessage);
-
-					logger.info("Email sended succesfull!");
-					fireOnMailSended(mailMessage);
-				} catch (Exception me) {
-					logger.error("Error sending e-mail " + mailMessage, me);
-					fireOnMailSendFail(mailMessage, me);
-					throw new EmailServiceException("Error sending mail message " + mailMessage, me);
-
+				if (mailMessage.getTemplate() != null) {
+					processTemplate(mailMessage);
 				}
+
+				JavaMailSenderImpl jmsi = (JavaMailSenderImpl) createMailSender(finalAccount);
+				MimeMessage mimeMessage = jmsi.createMimeMessage();
+
+				MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+				helper.setTo(mailMessage.getTo());
+				if (!mailMessage.getTos().isEmpty()) {
+					helper.setTo(mailMessage.getTosAsArray());
+				}
+				String from = finalAccount.getFromAddress();
+				String personal = finalAccount.getName();
+				if (from != null && personal != null) {
+					helper.setFrom(from, personal);
+				}
+
+				if (!mailMessage.getBccs().isEmpty()) {
+					helper.setBcc(mailMessage.getBccsAsArray());
+				}
+
+				if (!mailMessage.getCcs().isEmpty()) {
+					helper.setCc(mailMessage.getCcsAsArray());
+				}
+
+				helper.setSubject(mailMessage.getSubject());
+				if (mailMessage.getPlainText() != null && mailMessage.getContent() != null) {
+					helper.setText(mailMessage.getPlainText(), mailMessage.getContent());
+				} else {
+					helper.setText(mailMessage.getContent(), true);
+				}
+
+				for (File archivo : mailMessage.getAttachtments()) {
+					helper.addAttachment(archivo.getName(), archivo);
+				}
+
+				fireOnMailSending(mailMessage);
+				logger.info("Sending e-mail " + mailMessage);
+				jmsi.send(mimeMessage);
+
+				logger.info("Email sended succesfull!");
+				fireOnMailSended(mailMessage);
+			} catch (Exception me) {
+				logger.error("Error sending e-mail " + mailMessage, me);
+				fireOnMailSendFail(mailMessage, me);
+				throw new EmailServiceException("Error sending mail message " + mailMessage, me);
+
 			}
 		});
 		thread.start();
@@ -136,7 +136,12 @@ public class EmailServiceImpl implements EmailService {
 	public EmailAccount getPreferredEmailAccount() {
 		EmailAccount account = crudService.findSingle(EmailAccount.class, "preferred", true);
 		if (account == null) {
-			logger.warn("There is not a preferred email account ");
+			logger.warn("There is not a preferred email account, trying to get System Account email account ");
+			Long systemAccountId = accountServiceAPI.getSystemAccountId();
+			if (systemAccountId != null) {
+				account = crudService.findSingle(EmailAccount.class,
+						QueryParameters.with("accountId", systemAccountId).add("preferred", true));
+			}
 		}
 		return account;
 	}
@@ -150,7 +155,16 @@ public class EmailServiceImpl implements EmailService {
 
 	@Override
 	public EmailTemplate getTemplateByName(String name) {
-		return crudService.findSingle(EmailTemplate.class, "name", name);
+		EmailTemplate template = crudService.findSingle(EmailTemplate.class, "name", name);
+		if (template == null) {
+			logger.warn("There is not a template with name " + name + ", trying to get System Account template ");
+			Long systemAccountId = accountServiceAPI.getSystemAccountId();
+			if (systemAccountId != null) {
+				template = crudService.findSingle(EmailTemplate.class,
+						QueryParameters.with("accountId", systemAccountId).add("name", name));
+			}
+		}
+		return template;
 	}
 
 	private MailSender createMailSender(EmailAccount account) {
