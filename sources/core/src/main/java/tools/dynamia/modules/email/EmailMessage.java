@@ -34,10 +34,12 @@ public class EmailMessage implements Serializable {
 	private String subject;
 	private String content;
 	private String plainText;
-	private final List<File> attachtments = new ArrayList<File>();
+	private final List<EmailAttachment> attachments = new ArrayList<>();
 	private EmailAccount mailAccount;
 	private EmailTemplate template;
-	private Map<String, Object> templateModel = new HashMap<String, Object>();
+	private String templateName;
+	private String source;
+	private Map<String, Object> templateModel = new HashMap<>();
 
 	public EmailMessage() {
 	}
@@ -51,6 +53,22 @@ public class EmailMessage implements Serializable {
 		this.to = to;
 		this.subject = subject;
 		this.content = content;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getTemplateName() {
+		return templateName;
+	}
+
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
 	}
 
 	public Map<String, Object> getTemplateModel() {
@@ -105,8 +123,12 @@ public class EmailMessage implements Serializable {
 		bccs.add(bcc);
 	}
 
-	public void addAttachtment(File file) {
-		attachtments.add(file);
+	public void addAttachment(File file) {
+		attachments.add(new EmailAttachment(file));
+	}
+
+	public void addAttachment(EmailAttachment attachment) {
+		attachments.add(attachment);
 	}
 
 	public String getSubject() {
@@ -149,8 +171,8 @@ public class EmailMessage implements Serializable {
 		return getBccs().toArray(new String[bccs.size()]);
 	}
 
-	public List<File> getAttachtments() {
-		return attachtments;
+	public List<EmailAttachment> getAttachments() {
+		return attachments;
 	}
 
 	@Override

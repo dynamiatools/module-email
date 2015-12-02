@@ -2,19 +2,24 @@ view: form
 beanClass: tools.dynamia.modules.email.domain.EmailTemplate
 autofields: false
 
-
 fields:
    name:
+   parent:
    description:
       params:
-          multiline: true
-          height: 40px
+          span: 3
+   to:
+   cc:
+   bcc:       
    subject:
+      params:
+          span: 3
    content:      
       component: richeditor
       params:          
           height: 400px;
+          span: 3
    enabled:
           
 layout:
-   columns: 1
+   columns: 3

@@ -1,9 +1,11 @@
 package tools.dynamia.modules.email.domain;
 
 import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import tools.dynamia.domain.contraints.NotEmpty;
@@ -27,6 +29,46 @@ public class EmailTemplate extends SimpleEntitySaaS {
 	@NotEmpty(message = "Enter template content")
 	private String content;
 	private boolean enabled = true;
+	@Column(length = 2000)
+	private String to;
+	@Column(length = 2000)
+	private String cc;
+	@Column(length = 2000)
+	private String bcc;
+	@OneToOne
+	private EmailTemplate parent;
+
+	public EmailTemplate getParent() {
+		return parent;
+	}
+
+	public void setParent(EmailTemplate parent) {
+		this.parent = parent;
+	}
+
+	public String getTo() {
+		return to;
+	}
+
+	public void setTo(String to) {
+		this.to = to;
+	}
+
+	public String getCc() {
+		return cc;
+	}
+
+	public void setCc(String cc) {
+		this.cc = cc;
+	}
+
+	public String getBcc() {
+		return bcc;
+	}
+
+	public void setBcc(String bcc) {
+		this.bcc = bcc;
+	}
 
 	public boolean isEnabled() {
 		return enabled;

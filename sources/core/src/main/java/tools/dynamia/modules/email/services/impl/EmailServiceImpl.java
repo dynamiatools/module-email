@@ -6,12 +6,15 @@ package tools.dynamia.modules.email.services.impl;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.mail.internet.MimeMessage;
 
+import org.apache.log4j.chainsaw.Main;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +25,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import tools.dynamia.commons.StringUtils;
 import tools.dynamia.commons.logger.LoggingService;
 import tools.dynamia.commons.logger.SLF4JLoggingService;
 import tools.dynamia.domain.query.QueryParameters;
 import tools.dynamia.domain.services.CrudService;
 import tools.dynamia.integration.Containers;
+import tools.dynamia.modules.email.EmailAttachment;
 import tools.dynamia.modules.email.EmailMessage;
 import tools.dynamia.modules.email.EmailServiceException;
 import tools.dynamia.modules.email.EmailServiceListener;
+import tools.dynamia.modules.email.EmailTemplateModelProvider;
 import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.modules.email.services.EmailService;
@@ -66,10 +72,16 @@ public class EmailServiceImpl implements EmailService {
 		}
 
 		if (account == null) {
+			logger.warn("No email account to send " + mailMessage);
 			return;
 		}
 
+		if (mailMessage.getTemplate() != null && !mailMessage.getTemplateName().isEmpty() && mailMessage.getTemplate() == null) {
+			mailMessage.setTemplate(getTemplateByName(mailMessage.getTemplateName()));
+		}
+
 		if (mailMessage.getTemplate() != null && !mailMessage.getTemplate().isEnabled()) {
+			logger.warn("Template " + mailMessage.getTemplate().getName() + " is not Enabled");
 			return;
 		}
 
@@ -111,8 +123,8 @@ public class EmailServiceImpl implements EmailService {
 					helper.setText(mailMessage.getContent(), true);
 				}
 
-				for (File archivo : mailMessage.getAttachtments()) {
-					helper.addAttachment(archivo.getName(), archivo);
+				for (EmailAttachment archivo : mailMessage.getAttachments()) {
+					helper.addAttachment(archivo.getName(), archivo.getFile());
 				}
 
 				fireOnMailSending(mailMessage);
@@ -202,20 +214,78 @@ public class EmailServiceImpl implements EmailService {
 			throw new EmailServiceException(message + " has no template to process");
 		}
 
-		StringWriter contentWriter = new StringWriter();
-		StringWriter subjectWriter = new StringWriter();
 		EmailTemplate template = message.getTemplate();
 		VelocityContext context = new VelocityContext();
+
+		//Load model from providers
+		if (message.getSource() != null && !message.getSource().isEmpty()) {
+			Containers.get().findObjects(EmailTemplateModelProvider.class, object -> object.equals(message.getSource()))
+					.forEach(p -> {
+						Map<String, Object> model = p.getModel(message);
+						if (model != null) {
+							for (Entry<String, Object> entry : model.entrySet()) {
+								context.put(entry.getKey(), entry.getValue());
+							}
+						}
+					});
+			;
+		}
+
+		//Load message models, can override providers models
 		if (message.getTemplateModel() != null) {
 			for (Entry<String, Object> entry : message.getTemplateModel().entrySet()) {
 				context.put(entry.getKey(), entry.getValue());
 			}
 		}
 
-		velocityEngine.evaluate(context, subjectWriter, "log", template.getSubject());
-		velocityEngine.evaluate(context, contentWriter, "log", template.getContent());
-		message.setSubject(subjectWriter.toString());
-		message.setContent(contentWriter.toString());
+		message.setSubject(parse(template.getSubject(), context));
+
+		String content = parse(template.getContent(), context);
+		if (template.getParent() != null) {
+			context.put("TEMPLATE_CONTENT", content);
+			content = parse(template.getParent().getContent(), context);
+		}
+
+		message.setContent(content);
+
+		String[] tos = parseDestination(template.getTo(), context);
+		if (tos != null) {
+			for (String to : tos) {
+				message.addTo(to);
+			}
+		}
+
+		String[] ccs = parseDestination(template.getCc(), context);
+		if (ccs != null) {
+			for (String cc : ccs) {
+				message.addCc(cc);
+			}
+		}
+
+		String[] bccs = parseDestination(template.getBcc(), context);
+		if (bccs != null) {
+			for (String bcc : bccs) {
+				message.addBcc(bcc);
+			}
+		}
+	}
+
+	private String parse(String templateString, VelocityContext context) {
+		StringWriter writer = new StringWriter();
+		velocityEngine.evaluate(context, writer, "log", templateString);
+		return writer.toString();
+	}
+
+	private String[] parseDestination(String destination, VelocityContext context) {
+		if (destination != null && !destination.isEmpty()) {
+			destination = parse(destination, context);
+			if (destination.contains(",")) {
+				return StringUtils.split(destination, ",");
+			} else {
+				return new String[] { destination };
+			}
+		}
+		return null;
 	}
 
 	private void fireOnMailSending(EmailMessage message) {
