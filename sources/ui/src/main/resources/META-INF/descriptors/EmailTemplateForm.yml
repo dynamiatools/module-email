@@ -5,6 +5,7 @@ autofields: false
 fields:
    name:
    parent:
+   enabled:
    description:
       params:
           span: 3
@@ -19,7 +20,7 @@ fields:
       params:          
           height: 400px;
           span: 3
-   enabled:
+   
           
 layout:
    columns: 3

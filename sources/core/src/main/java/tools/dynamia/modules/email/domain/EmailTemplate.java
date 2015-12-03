@@ -29,11 +29,11 @@ public class EmailTemplate extends SimpleEntitySaaS {
 	@NotEmpty(message = "Enter template content")
 	private String content;
 	private boolean enabled = true;
-	@Column(length = 2000)
+	@Column(length = 2000, name = "templateTo")
 	private String to;
-	@Column(length = 2000)
+	@Column(length = 2000, name = "templateCc")
 	private String cc;
-	@Column(length = 2000)
+	@Column(length = 2000, name = "templateBcc")
 	private String bcc;
 	@OneToOne
 	private EmailTemplate parent;
