@@ -8,13 +8,10 @@ package tools.dynamia.modules.email.actions;
 import static tools.dynamia.viewers.ViewDescriptorBuilder.field;
 import static tools.dynamia.viewers.ViewDescriptorBuilder.viewDescriptor;
 
-import java.util.Map;
-
 import org.zkoss.zul.Messagebox;
 
 import tools.dynamia.actions.AbstractAction;
 import tools.dynamia.actions.ActionEvent;
-import tools.dynamia.actions.ActionEventBuilder;
 import tools.dynamia.actions.ActionRenderer;
 import tools.dynamia.actions.InstallAction;
 import tools.dynamia.commons.ApplicableClass;
@@ -28,7 +25,6 @@ import tools.dynamia.modules.email.services.EmailService;
 import tools.dynamia.ui.MessageType;
 import tools.dynamia.ui.UIMessages;
 import tools.dynamia.viewers.ViewDescriptor;
-import tools.dynamia.zk.actions.ActionToolbar;
 import tools.dynamia.zk.actions.ToolbarbuttonActionRenderer;
 import tools.dynamia.zk.util.ZKUtil;
 import tools.dynamia.zk.viewers.ui.Viewer;
@@ -71,7 +67,11 @@ public class TestEmailAccountAction extends AbstractCrudAction {
 
 	private Viewer createView(EmailAccount account) {
 		ViewDescriptor descriptor = viewDescriptor("form", EmailMessage.class, false)
-				.fields(field("to"), field("subject"), field("content").params("multiline", true, "height", "200px")).layout("columns", 1)
+				.fields(field("to"),
+						field("subject"),
+						field("content")
+								.params("multiline", true, "height", "200px"))
+				.layout("columns", 1)
 				.build();
 
 		final Viewer viewer = new Viewer(descriptor);
@@ -79,15 +79,7 @@ public class TestEmailAccountAction extends AbstractCrudAction {
 		msg.setMailAccount(account);
 		viewer.setValue(msg);
 
-		ActionToolbar toolbar = new ActionToolbar(new ActionEventBuilder() {
-
-			@Override
-			public ActionEvent buildActionEvent(Object src, Map<String, Object> parms1) {
-				return new ActionEvent(viewer.getValue(), src);
-			}
-		});
-		toolbar.addAction(new SendTestEmailAction());
-		viewer.setToolbar(toolbar);
+		viewer.addAction(new SendTestEmailAction());
 
 		return viewer;
 
@@ -111,6 +103,7 @@ public class TestEmailAccountAction extends AbstractCrudAction {
 						UIMessages.showMessage("The email test has been completed, check email inbox");
 					} catch (Exception e) {
 						Messagebox.show("Error sending test: " + e.getMessage());
+						e.printStackTrace();
 					}
 				} else {
 					UIMessages.showMessage("Enter [to] address", MessageType.ERROR);

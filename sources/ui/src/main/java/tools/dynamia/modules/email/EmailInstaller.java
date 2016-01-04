@@ -1,15 +1,20 @@
 package tools.dynamia.modules.email;
 
+import org.springframework.stereotype.Component;
+
 import tools.dynamia.crud.CrudPage;
-import tools.dynamia.integration.sterotypes.Provider;
 import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.navigation.Module;
 import tools.dynamia.navigation.ModuleProvider;
 import tools.dynamia.navigation.PageGroup;
 
-@Provider
+@Component("EmailModule")
 public class EmailInstaller implements ModuleProvider {
+
+	public EmailInstaller() {
+		System.err.println("STARTING EMAIL MODULE INSTALLER");
+	}
 
 	@Override
 	public Module getModule() {

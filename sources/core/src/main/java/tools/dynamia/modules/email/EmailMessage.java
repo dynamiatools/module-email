@@ -177,6 +177,7 @@ public class EmailMessage implements Serializable {
 
 	@Override
 	public String toString() {
-		return tos.toString() + " Subject: " + subject;
+
+		return String.format("To: %s, tos: %s, Subject: %s", to, tos.toString(), subject);
 	}
 }
