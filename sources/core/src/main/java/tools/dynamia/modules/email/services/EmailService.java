@@ -22,6 +22,8 @@ public interface EmailService {
 
 	public EmailAccount getPreferredEmailAccount();
 
+	EmailTemplate getTemplateByName(String name, boolean autocreate);
+
 	public EmailTemplate getTemplateByName(String name);
 
 }

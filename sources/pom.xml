@@ -1,71 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>tools.dynamia.modules</groupId>
-	<artifactId>tools.dynamia.modules.email.parent</artifactId>
-	<name>DynamiaModules - Email Parent (${project.version})</name>
-	<packaging>pom</packaging>
-	<version>1.0.0</version>
-	<url>http://www.dynamiasoluciones.com</url>
-	<properties>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>tools.dynamia.modules</groupId>
+    <artifactId>tools.dynamia.modules.email.parent</artifactId>
+    <name>DynamiaModules - Email Parent (${project.version})</name>
+    <packaging>pom</packaging>
+    <version>2.0.0</version>
+    <url>http://www.dynamiasoluciones.com</url>
+    <properties>
+        <dynatools.version>3.1.0.Beta</dynatools.version>
+        <spring.version>4.2.2.RELEASE</spring.version>
+        <!-- Versiones de Modulos -->
+        <saas.version>2.0.0</saas.version>
 
-		<dynatools.version>3.0.0.Final</dynatools.version>
-	<spring.version>4.2.2.RELEASE</spring.version>
-		<!-- Versiones de Modulos -->
-		<saas.version>2.0.0</saas.version>
+        <java.version>1.8</java.version>
+        <maven.compiler>2.3.2</maven.compiler>
+        <source.encoding>UTF-8</source.encoding>
+    </properties>
 
-		<java.version>1.8</java.version>
-		<maven.compiler>2.3.2</maven.compiler>
-		<source.encoding>UTF-8</source.encoding>
-	</properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${source.encoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler}</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-					<encoding>${source.encoding}</encoding>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
-	<dependencies>
-
-	
-	
-		<dependency>
-			<groupId>tools.dynamia.modules</groupId>
-			<artifactId>tools.dynamia.modules.saas.api</artifactId>
-			<version>${saas.version}</version>
-		</dependency>
+    <dependencies>
 
 
-
-		<!-- TEST DEPENDIENCIES -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
-			<scope>test</scope>
-		</dependency>
-
-	</dependencies>
-
-	<modules>
-		<module>core</module>
-		<module>ui</module>
-	</modules>
+        <dependency>
+            <groupId>tools.dynamia.modules</groupId>
+            <artifactId>tools.dynamia.modules.saas.api</artifactId>
+            <version>${saas.version}</version>
+        </dependency>
 
 
-	<distributionManagement>
-		<repository>
-			<id>nexus</id>
-			<url>http://server.dynamiasoluciones.com:8081/nexus/content/repositories/releases</url>
-		</repository>
-	</distributionManagement>
+        <!-- TEST DEPENDIENCIES -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <modules>
+        <module>core</module>
+        <module>ui</module>
+    </modules>
+
+
+    <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <url>http://server.dynamiasoluciones.com:8081/nexus/content/repositories/releases</url>
+        </repository>
+    </distributionManagement>
 </project>

@@ -171,8 +171,9 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 		crudService.updateField(account, "preferred", true);
 	}
 
+
 	@Override
-	public EmailTemplate getTemplateByName(String name) {
+	public EmailTemplate getTemplateByName(String name, boolean autocreate) {
 		EmailTemplate template = crudService.findSingle(EmailTemplate.class, "name", name);
 		if (template == null) {
 			logger.warn("There is not a template with name " + name + ", trying to get System Account template ");
@@ -182,7 +183,24 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 						QueryParameters.with("accountId", systemAccountId).add("name", name));
 			}
 		}
+
+		if(template==null && autocreate){
+			template = new EmailTemplate();
+			template.setName(name);
+			template.setAccountId(accountServiceAPI.getCurrentAccountId());
+			template.setEnabled(false);
+			template.setContent("<empty>");
+			template.setSubject(name);
+			template.setDescription("autocreated template");
+			template = crudService.create(template);
+		}
+
 		return template;
+	}
+
+	@Override
+	public EmailTemplate getTemplateByName(String name){
+		return getTemplateByName(name,true);
 	}
 
 	private MailSender createMailSender(EmailAccount account) {
