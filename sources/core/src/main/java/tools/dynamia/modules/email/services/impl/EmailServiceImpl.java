@@ -158,7 +158,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 	}
 
 	private String[] valideArrayEmails(String[] bccsAsArray) {
-		String[] array = Arrays.asList(bccsAsArray).stream().flatMap(e -> Arrays.asList(e.split(",")).stream())
+		String[] array = Arrays.asList(bccsAsArray).stream().flatMap(e -> Arrays.stream(e.split(",")))
 				.filter(e -> emailValidator.isValid(e, null)).toArray(String[]::new);
 		return array;
 	}
