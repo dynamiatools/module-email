@@ -4,6 +4,16 @@
  */
 package tools.dynamia.modules.email.services.impl;
 
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+
+import javax.mail.internet.MimeMessage;
+
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,28 +23,26 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import tools.dynamia.commons.StringUtils;
 import tools.dynamia.commons.logger.LoggingService;
 import tools.dynamia.commons.logger.SLF4JLoggingService;
+import tools.dynamia.domain.contraints.EmailValidator;
 import tools.dynamia.domain.query.QueryParameters;
 import tools.dynamia.domain.services.CrudService;
 import tools.dynamia.domain.util.CrudServiceListenerAdapter;
 import tools.dynamia.integration.Containers;
 import tools.dynamia.integration.scheduling.SchedulerUtil;
 import tools.dynamia.integration.scheduling.Task;
-import tools.dynamia.modules.email.*;
+import tools.dynamia.modules.email.EmailAttachment;
+import tools.dynamia.modules.email.EmailMessage;
+import tools.dynamia.modules.email.EmailServiceException;
+import tools.dynamia.modules.email.EmailServiceListener;
+import tools.dynamia.modules.email.EmailTemplateModelProvider;
 import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.modules.email.services.EmailService;
 import tools.dynamia.modules.saas.api.AccountServiceAPI;
-
-import javax.mail.internet.MimeMessage;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 
 /**
  * @author ronald
@@ -51,6 +59,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 	private AccountServiceAPI accountServiceAPI;
 
 	private VelocityEngine velocityEngine = new VelocityEngine();
+	private EmailValidator emailValidator = new EmailValidator();
 
 	private final LoggingService logger = new SLF4JLoggingService(EmailService.class);
 
@@ -83,7 +92,6 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 		}
 
 		final EmailAccount finalAccount = account;
-
 		SchedulerUtil.run(new Task("Email Sender") {
 
 			@Override
@@ -93,16 +101,20 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 					if (mailMessage.getTemplate() != null) {
 						processTemplate(mailMessage);
 					}
-
 					JavaMailSenderImpl jmsi = (JavaMailSenderImpl) createMailSender(finalAccount);
 					MimeMessage mimeMessage = jmsi.createMimeMessage();
 
 					MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-					if (mailMessage.getTo() != null) {
+					String[] tosAsArray = mailMessage.getTosAsArray();
+					if (mailMessage.getTo() != null && !mailMessage.getTo().isEmpty()) {
 						helper.setTo(mailMessage.getTo().split(","));
+					} else {
+						if (!mailMessage.getTos().isEmpty())
+							helper.setTo(tosAsArray[0].toString());
 					}
+
 					if (!mailMessage.getTos().isEmpty()) {
-						helper.setTo(mailMessage.getTosAsArray());
+						helper.setTo(valideArrayEmails(tosAsArray));
 					}
 					String from = finalAccount.getFromAddress();
 					String personal = finalAccount.getName();
@@ -111,11 +123,11 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 					}
 
 					if (!mailMessage.getBccs().isEmpty()) {
-						helper.setBcc(mailMessage.getBccsAsArray());
+						helper.setBcc(valideArrayEmails(mailMessage.getBccsAsArray()));
 					}
 
 					if (!mailMessage.getCcs().isEmpty()) {
-						helper.setCc(mailMessage.getCcsAsArray());
+						helper.setCc(valideArrayEmails(mailMessage.getCcsAsArray()));
 					}
 
 					helper.setSubject(mailMessage.getSubject());
@@ -130,7 +142,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 					}
 
 					fireOnMailSending(mailMessage);
-					logger.info("Sending e-mail " + mailMessage);
+					logger.error("Sending e-mail " + mailMessage);
 					jmsi.send(mimeMessage);
 
 					logger.info("Email sended succesfull!");
@@ -141,7 +153,14 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 					throw new EmailServiceException("Error sending mail message " + mailMessage, me);
 				}
 			}
+
 		});
+	}
+
+	private String[] valideArrayEmails(String[] bccsAsArray) {
+		String[] array = Arrays.asList(bccsAsArray).stream().flatMap(e -> Arrays.asList(e.split(",")).stream())
+				.filter(e -> emailValidator.isValid(e, null)).toArray(String[]::new);
+		return array;
 	}
 
 	@Override
