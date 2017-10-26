@@ -105,7 +105,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 					MimeMessage mimeMessage = jmsi.createMimeMessage();
 
 					MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-					String[] tosAsArray = mailMessage.getTosAsArray();
+					String[] tosAsArray = valideArrayEmails(mailMessage.getTosAsArray());
 					if (mailMessage.getTo() != null && !mailMessage.getTo().isEmpty()) {
 						helper.setTo(mailMessage.getTo().split(","));
 					} else {
