@@ -137,9 +137,15 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 						helper.setText(mailMessage.getContent(), true);
 					}
 
+					if(mailMessage.getReplyTo()!=null && !mailMessage.getReplyTo().isEmpty()){
+						helper.setReplyTo(mailMessage.getReplyTo());
+					}
+
 					for (EmailAttachment archivo : mailMessage.getAttachments()) {
 						helper.addAttachment(archivo.getName(), archivo.getFile());
 					}
+
+
 
 					fireOnMailSending(mailMessage);
 					logger.error("Sending e-mail " + mailMessage);
