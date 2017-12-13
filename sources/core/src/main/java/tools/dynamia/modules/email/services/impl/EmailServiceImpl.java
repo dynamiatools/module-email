@@ -103,7 +103,6 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 					}
 					JavaMailSenderImpl jmsi = (JavaMailSenderImpl) createMailSender(finalAccount);
 					MimeMessage mimeMessage = jmsi.createMimeMessage();
-
 					MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 					String[] tosAsArray = valideArrayEmails(mailMessage.getTosAsArray());
 					if (mailMessage.getTo() != null && !mailMessage.getTo().isEmpty()) {
@@ -137,15 +136,13 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 						helper.setText(mailMessage.getContent(), true);
 					}
 
-					if(mailMessage.getReplyTo()!=null && !mailMessage.getReplyTo().isEmpty()){
+					if (mailMessage.getReplyTo() != null && !mailMessage.getReplyTo().isEmpty()) {
 						helper.setReplyTo(mailMessage.getReplyTo());
 					}
 
 					for (EmailAttachment archivo : mailMessage.getAttachments()) {
 						helper.addAttachment(archivo.getName(), archivo.getFile());
 					}
-
-
 
 					fireOnMailSending(mailMessage);
 					logger.error("Sending e-mail " + mailMessage);
@@ -165,7 +162,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
 	private String[] valideArrayEmails(String[] bccsAsArray) {
 		String[] array = Arrays.asList(bccsAsArray).stream().flatMap(e -> Arrays.stream(e.split(",")))
-				.filter(e -> emailValidator.isValid(e, null)).toArray(String[]::new);
+				.map(e -> e.trim()).filter(e -> emailValidator.isValid(e, null)).toArray(String[]::new);
 		return array;
 	}
 
