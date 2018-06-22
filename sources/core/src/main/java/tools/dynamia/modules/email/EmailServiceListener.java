@@ -7,7 +7,7 @@ package tools.dynamia.modules.email;
 
 /**
  *
- * @author mario
+ * @author Mario Serrano Leones
  */
 public interface EmailServiceListener {
 

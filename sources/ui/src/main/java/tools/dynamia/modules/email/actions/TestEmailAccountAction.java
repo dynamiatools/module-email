@@ -31,7 +31,7 @@ import tools.dynamia.zk.viewers.ui.Viewer;
 
 /**
  *
- * @author mario
+ * @author Mario Serrano Leones
  */
 @InstallAction
 public class TestEmailAccountAction extends AbstractCrudAction {

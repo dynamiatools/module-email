@@ -13,7 +13,7 @@ import tools.dynamia.modules.saas.api.SimpleEntitySaaS;
 
 /**
  *
- * @author mario
+ * @author Mario Serrano Leones
  */
 @Entity
 @Table(name = "email_accounts")

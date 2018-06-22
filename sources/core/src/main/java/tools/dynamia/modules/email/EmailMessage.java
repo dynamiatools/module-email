@@ -18,7 +18,7 @@ import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 
 /**
- * @author mario
+ * @author Mario Serrano Leones
  */
 public class EmailMessage implements Serializable {
 
