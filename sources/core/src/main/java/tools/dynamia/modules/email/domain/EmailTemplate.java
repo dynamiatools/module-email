@@ -9,7 +9,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import tools.dynamia.domain.contraints.NotEmpty;
-import tools.dynamia.modules.saas.api.SimpleEntitySaaS;
+import tools.dynamia.modules.saas.jpa.SimpleEntitySaaS;
 
 @Entity
 @Table(name = "email_templates")

@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import tools.dynamia.domain.contraints.NotEmpty;
-import tools.dynamia.modules.saas.api.SimpleEntitySaaS;
+import tools.dynamia.modules.saas.jpa.SimpleEntitySaaS;
 
 /**
  *
