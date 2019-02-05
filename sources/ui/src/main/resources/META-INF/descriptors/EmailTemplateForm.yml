@@ -3,24 +3,34 @@ beanClass: tools.dynamia.modules.email.domain.EmailTemplate
 autofields: false
 
 fields:
-   name:
-   parent:
-   enabled:
-   description:
-      params:
-          span: 3
-   to:
-   cc:
-   bcc:       
-   subject:
-      params:
-          span: 3
-   content:      
-      component: richeditor
-      params:          
-          height: 400px;
-          span: 3
-   
-          
+  name:
+  parent:
+  description:
+  enabled:
+
+  to:
+    params:
+      span: 2
+  cc:
+  bcc:
+  subject:
+    params:
+      span: 4
+  content:
+    component: richeditor
+    params:
+      height: 400px;
+      span: 4
+  sendSMS:
+    label: Send SMS
+  smsNumber:
+    label: SMS Number
+
+  smsText:
+    label: SMS Text
+    params:
+      span: 2
+
+
 layout:
-   columns: 3
+  columns: 4

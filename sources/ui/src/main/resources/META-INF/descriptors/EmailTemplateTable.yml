@@ -4,11 +4,12 @@ autofields: false
 
 
 fields:
-   name:
-   enabled:
-   description:
-   to:
-   cc:
-   bcc:
-
+  name:
+  enabled:
+  description:
+  to:
+  cc:
+  bcc:
+  sendSMS:
+    label: Send SMS
    

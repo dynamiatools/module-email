@@ -37,6 +37,9 @@ public class EmailTemplate extends SimpleEntitySaaS {
 	private String bcc;
 	@OneToOne
 	private EmailTemplate parent;
+	private boolean sendSMS;
+	private String smsNumber;
+	private String smsText;
 
 	public EmailTemplate getParent() {
 		return parent;
@@ -115,4 +118,27 @@ public class EmailTemplate extends SimpleEntitySaaS {
 		return getName();
 	}
 
+	public String getSmsText() {
+		return smsText;
+	}
+
+	public void setSmsText(String smsText) {
+		this.smsText = smsText;
+	}
+
+	public String getSmsNumber() {
+		return smsNumber;
+	}
+
+	public void setSmsNumber(String smsNumber) {
+		this.smsNumber = smsNumber;
+	}
+
+	public boolean isSendSMS() {
+		return sendSMS;
+	}
+
+	public void setSendSMS(boolean sendSMS) {
+		this.sendSMS = sendSMS;
+	}
 }
