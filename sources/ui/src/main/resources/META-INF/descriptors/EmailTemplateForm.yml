@@ -17,8 +17,9 @@ fields:
     params:
       span: 4
   content:
-    component: richeditor
+    component: aceditor
     params:
+      mode: velocity
       height: 400px;
       span: 4
   sendSMS:
