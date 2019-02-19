@@ -10,8 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import tools.dynamia.domain.ValidationError;
+import tools.dynamia.integration.Containers;
+import tools.dynamia.integration.scheduling.SchedulerUtil;
 import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailTemplate;
+import tools.dynamia.modules.email.services.EmailService;
 
 /**
  * @author Mario Serrano Leones
@@ -184,4 +188,24 @@ public class EmailMessage implements Serializable {
     public void setReplyTo(String replyTo) {
         this.replyTo = replyTo;
     }
+
+    /**
+     * Utility method for sendind this email message. It use @{@link EmailService} to send the message
+     */
+    public void send() {
+        EmailService emailService = Containers.get().findObject(EmailService.class);
+        if (emailService == null) {
+            throw new ValidationError("No email service found");
+        }
+
+        emailService.send(this);
+    }
+
+    /**
+     * Utility method for sendind this email message in a new thread. It use @{@link EmailService} to send the message
+     */
+    public void sendAsync() {
+        SchedulerUtil.run(this::send);
+    }
+
 }
