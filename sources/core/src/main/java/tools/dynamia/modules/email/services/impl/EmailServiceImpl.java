@@ -42,6 +42,7 @@ import tools.dynamia.domain.services.CrudService;
 import tools.dynamia.domain.util.CrudServiceListenerAdapter;
 import tools.dynamia.integration.Containers;
 import tools.dynamia.integration.scheduling.SchedulerUtil;
+import tools.dynamia.integration.scheduling.TaskException;
 import tools.dynamia.integration.scheduling.TaskWithResult;
 import tools.dynamia.modules.email.*;
 import tools.dynamia.modules.email.domain.EmailAccount;
@@ -106,76 +107,85 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
         }
 
         final EmailAccount finalAccount = account;
-        return SchedulerUtil.runWithResult(new TaskWithResult<EmailSendResult>() {
+        logger.info("Sending e-mail " + mailMessage);
+        try {
+            return SchedulerUtil.runWithResult(new TaskWithResult<EmailSendResult>() {
 
-            @Override
-            public EmailSendResult doWorkWithResult() {
-
-                try {
-                    if (mailMessage.getTemplate() != null) {
-                        processTemplate(mailMessage);
-                    }
-                    JavaMailSenderImpl jmsi = (JavaMailSenderImpl) createMailSender(finalAccount);
-                    MimeMessage mimeMessage = jmsi.createMimeMessage();
-                    MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-                    String[] tosAsArray = valideArrayEmails(mailMessage.getTosAsArray());
-                    if (mailMessage.getTo() != null && !mailMessage.getTo().isEmpty()) {
-                        helper.setTo(mailMessage.getTo().split(","));
-                    } else {
-                        if (!mailMessage.getTos().isEmpty())
-                            helper.setTo(tosAsArray[0].toString());
-                    }
-
-                    if (!mailMessage.getTos().isEmpty()) {
-                        helper.setTo(valideArrayEmails(tosAsArray));
-                    }
-                    String from = finalAccount.getFromAddress();
-                    String personal = finalAccount.getName();
-                    if (from != null && personal != null) {
-                        helper.setFrom(from, personal);
-                    }
-
-                    if (!mailMessage.getBccs().isEmpty()) {
-                        helper.setBcc(valideArrayEmails(mailMessage.getBccsAsArray()));
-                    }
-
-                    if (!mailMessage.getCcs().isEmpty()) {
-                        helper.setCc(valideArrayEmails(mailMessage.getCcsAsArray()));
-                    }
-
-                    helper.setSubject(mailMessage.getSubject());
-                    if (mailMessage.getPlainText() != null && mailMessage.getContent() != null) {
-                        helper.setText(mailMessage.getPlainText(), mailMessage.getContent());
-                    } else {
-                        helper.setText(mailMessage.getContent(), true);
-                    }
-
-                    if (mailMessage.getReplyTo() != null && !mailMessage.getReplyTo().isEmpty()) {
-                        helper.setReplyTo(mailMessage.getReplyTo());
-                    }
-
-                    for (EmailAttachment archivo : mailMessage.getAttachments()) {
-                        helper.addAttachment(archivo.getName(), archivo.getFile());
-                    }
-
-                    fireOnMailSending(mailMessage);
-                    logger.error("Sending e-mail " + mailMessage);
-                    jmsi.send(mimeMessage);
-
-                    logger.info("Email sended succesfull!");
-                    fireOnMailSended(mailMessage);
-                    crudService.executeWithinTransaction(() -> logEmailAddress(mailMessage));
-                    return new EmailSendResult(mailMessage, true, "ok");
-                } catch (Exception me) {
-                    logger.error("Error sending e-mail " + mailMessage, me);
-                    fireOnMailSendFail(mailMessage, me);
-                    return new EmailSendResult(mailMessage, new EmailServiceException("Error sending mail message " + mailMessage, me));
+                @Override
+                public EmailSendResult doWorkWithResult() {
+                    return processAndSendEmail(mailMessage, finalAccount);
                 }
-            }
-        });
+            });
+        } catch (TaskException e) {
+            logger.error("Error scheduling email task", e);
+            return CompletableFuture.completedFuture(new EmailSendResult(mailMessage, e));
+        }
     }
 
-    private String[] valideArrayEmails(String[] bccsAsArray) {
+    private EmailSendResult processAndSendEmail(EmailMessage mailMessage, EmailAccount emailAccount) {
+        try {
+            if (mailMessage.getTemplate() != null) {
+                processTemplate(mailMessage);
+            }
+            JavaMailSenderImpl jmsi = (JavaMailSenderImpl) createMailSender(emailAccount);
+            MimeMessage mimeMessage = jmsi.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            String[] tosAsArray = validateEmails(mailMessage.getTosAsArray());
+            if (mailMessage.getTo() != null && !mailMessage.getTo().isEmpty()) {
+                helper.setTo(mailMessage.getTo().split(","));
+            } else {
+                if (!mailMessage.getTos().isEmpty())
+                    helper.setTo(tosAsArray[0].toString());
+            }
+
+            if (!mailMessage.getTos().isEmpty()) {
+                helper.setTo(validateEmails(tosAsArray));
+            }
+            String from = emailAccount.getFromAddress();
+            String personal = emailAccount.getName();
+            if (from != null && personal != null) {
+                helper.setFrom(from, personal);
+            }
+
+            if (!mailMessage.getBccs().isEmpty()) {
+                helper.setBcc(validateEmails(mailMessage.getBccsAsArray()));
+            }
+
+            if (!mailMessage.getCcs().isEmpty()) {
+                helper.setCc(validateEmails(mailMessage.getCcsAsArray()));
+            }
+
+            helper.setSubject(mailMessage.getSubject());
+            if (mailMessage.getPlainText() != null && mailMessage.getContent() != null) {
+                helper.setText(mailMessage.getPlainText(), mailMessage.getContent());
+            } else {
+                helper.setText(mailMessage.getContent(), true);
+            }
+
+            if (mailMessage.getReplyTo() != null && !mailMessage.getReplyTo().isEmpty()) {
+                helper.setReplyTo(mailMessage.getReplyTo());
+            }
+
+            for (EmailAttachment archivo : mailMessage.getAttachments()) {
+                helper.addAttachment(archivo.getName(), archivo.getFile());
+            }
+
+            fireOnMailSending(mailMessage);
+
+            jmsi.send(mimeMessage);
+
+            logger.info("Email sended succesfull!");
+            fireOnMailSended(mailMessage);
+            crudService.executeWithinTransaction(() -> logEmailAddress(emailAccount, mailMessage));
+            return new EmailSendResult(mailMessage, true, "ok");
+        } catch (Exception me) {
+            logger.error("Error sending e-mail " + mailMessage, me);
+            fireOnMailSendFail(mailMessage, me);
+            return new EmailSendResult(mailMessage, new EmailServiceException("Error sending mail message " + mailMessage, me));
+        }
+    }
+
+    private String[] validateEmails(String[] bccsAsArray) {
         String[] array = Arrays.asList(bccsAsArray).stream().flatMap(e -> Arrays.stream(e.split(",")))
                 .map(e -> e.trim()).filter(e -> emailValidator.isValid(e, null)).toArray(String[]::new);
         return array;
@@ -383,25 +393,26 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
     @Override
     @Transactional
-    public void logEmailAddress(EmailMessage message) {
+    public void logEmailAddress(EmailAccount emailAccount, EmailMessage message) {
         Set<String> addresses = new HashSet<>();
         addresses.add(message.getTo());
         addresses.addAll(message.getTos());
         addresses.addAll(message.getBccs());
         addresses.addAll(message.getCcs());
 
-        addresses.forEach(a -> logEmailAddress(a, message.getTag()));
+        addresses.forEach(a -> logEmailAddress(emailAccount, a, message.getTag()));
     }
 
     @Override
     @Transactional
-    public void logEmailAddress(String address, String tag) {
+    public void logEmailAddress(EmailAccount account, String address, String tag) {
         try {
             EmailAddress emailAddress = getEmailAddress(address);
             if (emailAddress == null) {
                 emailAddress = new EmailAddress(address);
                 emailAddress.setSendCount(1);
                 emailAddress.setTag(tag);
+                emailAddress.setAccountId(account.getAccountId());
                 emailAddress.save();
             } else {
                 crudService.increaseCounter(emailAddress, "sendCount");

@@ -40,14 +40,16 @@ import java.util.concurrent.Future;
 public interface EmailService {
 
     /**
-     * Send email message asynchronously
+     * Send email message asynchronously. Default implementation use Spring Scheduling and Async API. Make sure your
+     * application has {@link org.springframework.scheduling.annotation.EnableAsync} and
+     * {@link org.springframework.scheduling.annotation.EnableScheduling} configured.
      *
      * @param message
      */
     Future<EmailSendResult> send(EmailMessage message);
 
     /**
-     * Build and send email message asynchronously
+     * Build and send email message asynchronously. See {@link EmailService#send(EmailMessage)}
      *
      * @param to
      * @param subject
@@ -91,7 +93,7 @@ public interface EmailService {
      *
      * @param message
      */
-    void logEmailAddress(EmailMessage message);
+    void logEmailAddress(EmailAccount account, EmailMessage message);
 
     /**
      * Log email address
@@ -99,7 +101,7 @@ public interface EmailService {
      * @param address
      * @param tag
      */
-    void logEmailAddress(String address, String tag);
+    void logEmailAddress(EmailAccount account, String address, String tag);
 
     /**
      * Find a logged email address
