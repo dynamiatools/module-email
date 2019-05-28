@@ -62,6 +62,7 @@ public class EmailMessage implements Serializable {
     private String templateName;
     private String source;
     private String replyTo;
+    private String tag;
     private Map<String, Object> templateModel = new HashMap<>();
 
     public EmailMessage() {
@@ -231,4 +232,11 @@ public class EmailMessage implements Serializable {
         SchedulerUtil.run(this::send);
     }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 }

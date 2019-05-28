@@ -23,18 +23,6 @@ package tools.dynamia.modules.email.services.impl;
  * #L%
  */
 
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
-
-import javax.mail.internet.MimeMessage;
-
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,24 +32,30 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 import tools.dynamia.commons.StringUtils;
 import tools.dynamia.commons.logger.LoggingService;
 import tools.dynamia.commons.logger.SLF4JLoggingService;
-import tools.dynamia.domain.contraints.Email;
 import tools.dynamia.domain.contraints.EmailValidator;
+import tools.dynamia.domain.query.QueryConditions;
 import tools.dynamia.domain.query.QueryParameters;
 import tools.dynamia.domain.services.CrudService;
 import tools.dynamia.domain.util.CrudServiceListenerAdapter;
 import tools.dynamia.integration.Containers;
 import tools.dynamia.integration.scheduling.SchedulerUtil;
-import tools.dynamia.integration.scheduling.Task;
 import tools.dynamia.integration.scheduling.TaskWithResult;
 import tools.dynamia.modules.email.*;
 import tools.dynamia.modules.email.domain.EmailAccount;
+import tools.dynamia.modules.email.domain.EmailAddress;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.modules.email.services.EmailService;
 import tools.dynamia.modules.saas.api.AccountServiceAPI;
+
+import javax.mail.internet.MimeMessage;
+import java.io.StringWriter;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 /**
  * @author Mario Serrano Leones
@@ -170,6 +164,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
                     logger.info("Email sended succesfull!");
                     fireOnMailSended(mailMessage);
+                    crudService.executeWithinTransaction(() -> logEmailAddress(mailMessage));
                     return new EmailSendResult(mailMessage, true, "ok");
                 } catch (Exception me) {
                     logger.error("Error sending e-mail " + mailMessage, me);
@@ -203,7 +198,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void setPreferredEmailAccount(EmailAccount account) {
-        crudService.batchUpdate(EmailAccount.class, "preferred", false, new QueryParameters());
+        crudService.batchUpdate(EmailAccount.class, "preferred", false, QueryParameters.with("accountId", account.getAccountId()));
         crudService.updateField(account, "preferred", true);
     }
 
@@ -384,5 +379,40 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
         if (entity != null) {
             MAIL_SENDERS.remove(entity.getId());
         }
+    }
+
+    @Override
+    @Transactional
+    public void logEmailAddress(EmailMessage message) {
+        Set<String> addresses = new HashSet<>();
+        addresses.add(message.getTo());
+        addresses.addAll(message.getTos());
+        addresses.addAll(message.getBccs());
+        addresses.addAll(message.getCcs());
+
+        addresses.forEach(a -> logEmailAddress(a, message.getTag()));
+    }
+
+    @Override
+    @Transactional
+    public void logEmailAddress(String address, String tag) {
+        try {
+            EmailAddress emailAddress = getEmailAddress(address);
+            if (emailAddress == null) {
+                emailAddress = new EmailAddress(address);
+                emailAddress.setSendCount(1);
+                emailAddress.setTag(tag);
+                emailAddress.save();
+            } else {
+                crudService.increaseCounter(emailAddress, "sendCount");
+            }
+        } catch (Exception e) {
+            logger.error("Error loggin email address; " + address, e);
+        }
+    }
+
+    @Override
+    public EmailAddress getEmailAddress(String address) {
+        return crudService.findSingle(EmailAddress.class, "email", QueryConditions.eq(address));
     }
 }

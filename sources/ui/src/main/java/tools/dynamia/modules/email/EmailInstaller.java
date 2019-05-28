@@ -10,12 +10,12 @@ package tools.dynamia.modules.email;
  * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-3.0.html>.
@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import tools.dynamia.crud.CrudPage;
 import tools.dynamia.modules.email.domain.EmailAccount;
+import tools.dynamia.modules.email.domain.EmailAddress;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.navigation.Module;
 import tools.dynamia.navigation.ModuleProvider;
@@ -34,20 +35,18 @@ import tools.dynamia.navigation.PageGroup;
 @Component("EmailModule")
 public class EmailInstaller implements ModuleProvider {
 
-	public EmailInstaller() {
-		System.err.println("STARTING EMAIL MODULE INSTALLER");
-	}
 
-	@Override
-	public Module getModule() {
-		Module email = Module.getRef("system");
+    @Override
+    public Module getModule() {
+        Module email = Module.getRef("system");
 
-		PageGroup group = new PageGroup("email", "Email");
-		group.addPage(new CrudPage("accounts", "Cuentas", EmailAccount.class));
-		group.addPage(new CrudPage("templates", "Plantillas", EmailTemplate.class));
+        PageGroup group = new PageGroup("email", "Email");
+        group.addPage(new CrudPage("accounts", "Accounts", EmailAccount.class));
+        group.addPage(new CrudPage("templates", "Templates", EmailTemplate.class));
+        group.addPage(new CrudPage("addresses", "Email Addresses", EmailAddress.class));
 
-		email.addPageGroup(group);
-		return email;
-	}
+        email.addPageGroup(group);
+        return email;
+    }
 
 }

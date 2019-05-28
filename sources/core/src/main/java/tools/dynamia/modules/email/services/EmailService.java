@@ -23,9 +23,11 @@ package tools.dynamia.modules.email.services;
  * #L%
  */
 
+import org.springframework.transaction.annotation.Transactional;
 import tools.dynamia.modules.email.EmailMessage;
 import tools.dynamia.modules.email.EmailSendResult;
 import tools.dynamia.modules.email.domain.EmailAccount;
+import tools.dynamia.modules.email.domain.EmailAddress;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 
 import java.util.concurrent.Future;
@@ -84,4 +86,26 @@ public interface EmailService {
      */
     EmailTemplate getTemplateByName(String name);
 
+    /**
+     * Log all email address from message
+     *
+     * @param message
+     */
+    void logEmailAddress(EmailMessage message);
+
+    /**
+     * Log email address
+     *
+     * @param address
+     * @param tag
+     */
+    void logEmailAddress(String address, String tag);
+
+    /**
+     * Find a logged email address
+     *
+     * @param address
+     * @return
+     */
+    EmailAddress getEmailAddress(String address);
 }
