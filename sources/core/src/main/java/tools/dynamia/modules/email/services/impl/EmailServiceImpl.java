@@ -117,6 +117,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
                 }
             });
         } catch (TaskException e) {
+            e.printStackTrace();
             logger.error("Error scheduling email task", e);
             return CompletableFuture.completedFuture(new EmailSendResult(mailMessage, e));
         }
@@ -124,6 +125,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
     private EmailSendResult processAndSendEmail(EmailMessage mailMessage, EmailAccount emailAccount) {
         try {
+            logger.info("Proccesing email message using account: " + emailAccount);
             if (mailMessage.getTemplate() != null) {
                 processTemplate(mailMessage);
             }
@@ -176,9 +178,10 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
             logger.info("Email sended succesfull!");
             fireOnMailSended(mailMessage);
-            crudService.executeWithinTransaction(() -> logEmailAddress(emailAccount, mailMessage));
+            logEmailAddress(emailAccount, mailMessage);
             return new EmailSendResult(mailMessage, true, "ok");
         } catch (Exception me) {
+            me.printStackTrace();
             logger.error("Error sending e-mail " + mailMessage, me);
             fireOnMailSendFail(mailMessage, me);
             return new EmailSendResult(mailMessage, new EmailServiceException("Error sending mail message " + mailMessage, me));
@@ -246,6 +249,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
     private MailSender createMailSender(EmailAccount account) {
         JavaMailSenderImpl mailSender = (JavaMailSenderImpl) MAIL_SENDERS.get(account.getId());
         if (mailSender == null) {
+            logger.info("Creating Mail Sender for: " + account);
             mailSender = new JavaMailSenderImpl();
             mailSender.setHost(account.getServerAddress());
             mailSender.setPort(account.getPort());
@@ -284,6 +288,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
         }
 
         EmailTemplate template = message.getTemplate();
+        logger.info("Processing template " + template);
         VelocityContext context = new VelocityContext();
 
         // Load model from providers
@@ -392,15 +397,22 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
     }
 
     @Override
-    @Transactional
     public void logEmailAddress(EmailAccount emailAccount, EmailMessage message) {
-        Set<String> addresses = new HashSet<>();
-        addresses.add(message.getTo());
-        addresses.addAll(message.getTos());
-        addresses.addAll(message.getBccs());
-        addresses.addAll(message.getCcs());
+        try {
+            crudService.executeWithinTransaction(() -> {
+                Set<String> addresses = new HashSet<>();
+                addresses.add(message.getTo());
+                addresses.addAll(message.getTos());
+                addresses.addAll(message.getBccs());
+                addresses.addAll(message.getCcs());
 
-        addresses.forEach(a -> logEmailAddress(emailAccount, a, message.getTag()));
+                addresses.forEach(a -> logEmailAddress(emailAccount, a, message.getTag()));
+            });
+        } catch (Exception e) {
+            logger.error("Error logging email addresses: " + message);
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -414,8 +426,10 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
                 emailAddress.setTag(tag);
                 emailAddress.setAccountId(account.getAccountId());
                 emailAddress.save();
+                logger.info("Logging Email Address: " + address);
             } else {
                 crudService.increaseCounter(emailAddress, "sendCount");
+                logger.info("Updating Send count Email Address: " + address);
             }
         } catch (Exception e) {
             logger.error("Error loggin email address; " + address, e);

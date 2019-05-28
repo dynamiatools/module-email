@@ -149,6 +149,7 @@ public class TestEmailAccountAction extends AbstractCrudAction {
                                         e.printStackTrace();
                                     }
                                 })
+                                .onException(ex -> UIMessages.showMessage(ex.getMessage(), MessageType.ERROR))
                                 .onCancel(() -> future.cancel(true))
                                 .start();
                         LongOperationMonitorWindow window = new LongOperationMonitorWindow(operation, monitor);
