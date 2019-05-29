@@ -7,9 +7,9 @@
     <name>DynamiaModules - Email Parent</name>
     <packaging>pom</packaging>
     <version>2.1.0</version>
-    <description>DynamiaTools extension for build in app reports with queries and charts</description>
+    <description>DynamiaTools extension for sending async emails</description>
     <inceptionYear>2018</inceptionYear>
-    <url>https://www.dynamia.tools/reports</url>
+    <url>https://www.dynamia.tools/module-email</url>
 
     <organization>
         <name>Dynamia Soluciones IT SAS</name>
@@ -32,6 +32,10 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <scm>
+        <url>https://github.com/dynamia-projects/module-email</url>
+    </scm>
 
     <properties>
         <dynamiatools.version>3.6.0.Final</dynamiatools.version>
