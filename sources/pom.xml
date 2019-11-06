@@ -41,7 +41,7 @@
         <dynamiatools.version>4.0.0.Beta</dynamiatools.version>
         <spring.version>5.1.5.RELEASE</spring.version>
         <!-- Versiones de Modulos -->
-        <saas.version>2.3.0</saas.version>
+        <saas.version>2.4.0</saas.version>
 
         <java.version>1.8</java.version>
         <maven.compiler>3.8.1</maven.compiler>
