@@ -23,11 +23,7 @@ package tools.dynamia.modules.email.actions;
  * #L%
  */
 
-import static tools.dynamia.viewers.ViewDescriptorBuilder.field;
-import static tools.dynamia.viewers.ViewDescriptorBuilder.viewDescriptor;
-
 import org.zkoss.zul.Messagebox;
-
 import tools.dynamia.actions.AbstractAction;
 import tools.dynamia.actions.ActionEvent;
 import tools.dynamia.actions.ActionRenderer;
@@ -54,6 +50,9 @@ import tools.dynamia.zk.viewers.ui.Viewer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import static tools.dynamia.viewers.ViewDescriptorBuilder.field;
+import static tools.dynamia.viewers.ViewDescriptorBuilder.viewDescriptor;
+
 /**
  * @author Mario Serrano Leones
  */
@@ -73,7 +72,7 @@ public class TestEmailAccountAction extends AbstractCrudAction {
         EmailAccount account = (EmailAccount) evt.getData();
         if (account != null) {
             Viewer viewer = createView(account);
-            ZKUtil.showDialog("Test Message: " + account.getName(), viewer, "60%", "");
+            ZKUtil.showDialog("Test Message: " + account.getName(), viewer, "60%", null);
         } else {
             UIMessages.showMessage("Select account to test", MessageType.WARNING);
         }
@@ -104,6 +103,8 @@ public class TestEmailAccountAction extends AbstractCrudAction {
         viewer.setValue(msg);
 
         viewer.addAction(new SendTestEmailAction());
+        viewer.setVflex(null);
+        viewer.setContentVflex(null);
 
         return viewer;
 
