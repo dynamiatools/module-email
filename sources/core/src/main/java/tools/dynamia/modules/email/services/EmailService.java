@@ -110,4 +110,6 @@ public interface EmailService {
      * @return
      */
     EmailAddress getEmailAddress(String address);
+
+    void clearCache(EmailAccount account);
 }

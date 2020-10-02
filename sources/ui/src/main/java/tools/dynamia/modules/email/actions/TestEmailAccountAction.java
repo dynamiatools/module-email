@@ -23,6 +23,7 @@ package tools.dynamia.modules.email.actions;
  * #L%
  */
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zul.Messagebox;
 import tools.dynamia.actions.AbstractAction;
 import tools.dynamia.actions.ActionEvent;
@@ -58,6 +59,9 @@ import static tools.dynamia.viewers.ViewDescriptorBuilder.viewDescriptor;
  */
 @InstallAction
 public class TestEmailAccountAction extends AbstractCrudAction {
+
+    @Autowired
+    private EmailService service;
 
     public TestEmailAccountAction() {
         setName("Test Account");
@@ -98,28 +102,31 @@ public class TestEmailAccountAction extends AbstractCrudAction {
                 .build();
 
         final Viewer viewer = new Viewer(descriptor);
+
         EmailMessage msg = new EmailMessage();
         msg.setMailAccount(account);
         viewer.setValue(msg);
-
-        viewer.addAction(new SendTestEmailAction());
+        viewer.addAction(new SendTestEmailAction(service));
         viewer.setVflex(null);
         viewer.setContentVflex(null);
-
+        service.clearCache(account);
         return viewer;
 
     }
 
     private static class SendTestEmailAction extends AbstractAction {
 
-        public SendTestEmailAction() {
+        private EmailService service;
+
+        public SendTestEmailAction(EmailService service) {
             setName("Send Test");
             setImage("mail");
+            this.service = service;
         }
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            EmailService service = Containers.get().findObject(EmailService.class);
+
             EmailMessage msg = (EmailMessage) evt.getData();
             if (msg != null) {
                 if (msg.getTo() != null && !msg.getTo().isEmpty()) {

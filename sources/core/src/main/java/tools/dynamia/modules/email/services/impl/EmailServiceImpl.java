@@ -32,6 +32,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import tools.dynamia.commons.SimpleCache;
 import tools.dynamia.commons.StringUtils;
 import tools.dynamia.commons.logger.LoggingService;
 import tools.dynamia.commons.logger.SLF4JLoggingService;
@@ -64,7 +65,7 @@ import java.util.concurrent.Future;
 @Service
 public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> implements EmailService {
 
-    private final Map<Long, MailSender> MAIL_SENDERS = new HashMap<>();
+    private final SimpleCache<Long, MailSender> MAIL_SENDERS = new SimpleCache<>();
 
     @Autowired
     private CrudService crudService;
@@ -271,7 +272,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
             mailSender.setJavaMailProperties(jmp);
 
-            MAIL_SENDERS.put(account.getId(), mailSender);
+            MAIL_SENDERS.add(account.getId(), mailSender);
         }
 
         return mailSender;
@@ -392,7 +393,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
     @Override
     public void afterUpdate(EmailAccount entity) {
         if (entity != null) {
-            MAIL_SENDERS.remove(entity.getId());
+            clearCache(entity);
         }
     }
 
@@ -439,5 +440,11 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
     @Override
     public EmailAddress getEmailAddress(String address) {
         return crudService.findSingle(EmailAddress.class, "email", QueryConditions.eq(address));
+    }
+
+    @Override
+    public void clearCache(EmailAccount account) {
+        logger.info("Removing mail sender cache for "+account);
+        MAIL_SENDERS.remove(account.getId());
     }
 }
