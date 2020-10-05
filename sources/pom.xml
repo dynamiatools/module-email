@@ -9,7 +9,7 @@
     <version>2.2.0</version>
     <description>DynamiaTools extension for sending async emails</description>
     <inceptionYear>2018</inceptionYear>
-    <url>https://www.dynamia.tools/module-email</url>
+    <url>https://www.dynamia.tools/modules/email</url>
 
     <organization>
         <name>Dynamia Soluciones IT SAS</name>
@@ -41,7 +41,7 @@
         <dynamiatools.version>4.0.0.RC</dynamiatools.version>
         <spring.version>5.1.5.RELEASE</spring.version>
         <!-- Versiones de Modulos -->
-        <saas.version>2.4.0</saas.version>
+        <saas.version>2.4.1</saas.version>
 
         <java.version>1.8</java.version>
         <maven.compiler>3.8.1</maven.compiler>
@@ -90,12 +90,38 @@
                     </roots>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <failOnError>false</failOnError>
+                    <doclint>none</doclint>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <dependencies>
-
-
         <dependency>
             <groupId>tools.dynamia.modules</groupId>
             <artifactId>tools.dynamia.modules.saas.jpa</artifactId>
