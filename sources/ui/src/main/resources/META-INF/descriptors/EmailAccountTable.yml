@@ -19,8 +19,5 @@ fields:
   useTTLS:
     label: TTLS
 
-  smsEnabled:
-    label: SMS
-
   smsRegion:
     label: Region

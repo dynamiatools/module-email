@@ -29,6 +29,8 @@ public class SMSMessageLog extends BaseEntitySaaS {
     private String text;
     private String result;
 
+    public SMSMessageLog() {
+    }
 
     public SMSMessageLog(String phoneNumber, String text, String result) {
         this.phoneNumber = phoneNumber;
@@ -41,5 +43,29 @@ public class SMSMessageLog extends BaseEntitySaaS {
         this.text = text;
         this.result = result;
         setAccountId(accountId);
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 }

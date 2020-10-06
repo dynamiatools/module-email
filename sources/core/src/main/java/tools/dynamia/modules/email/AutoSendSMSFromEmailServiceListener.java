@@ -62,9 +62,7 @@ public class AutoSendSMSFromEmailServiceListener implements EmailServiceListener
             }
             try {
                 if (sms.getUsername() != null && sms.getPassword() != null) {
-
-                    String result = smsService.send(sms);
-                    logger.info("SMS Sended - " + result);
+                    smsService.send(sms);
                 }
             } catch (Exception e) {
                 logger.error("Error sending sms message from email " + message + " --> " + e.getMessage());

@@ -23,6 +23,7 @@ import tools.dynamia.crud.CrudPage;
 import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailAddress;
 import tools.dynamia.modules.email.domain.EmailTemplate;
+import tools.dynamia.modules.email.domain.SMSMessageLog;
 import tools.dynamia.navigation.Module;
 import tools.dynamia.navigation.ModuleProvider;
 import tools.dynamia.navigation.PageGroup;
@@ -39,7 +40,7 @@ public class EmailInstaller implements ModuleProvider {
         group.addPage(new CrudPage("accounts", "Accounts", EmailAccount.class));
         group.addPage(new CrudPage("templates", "Templates", EmailTemplate.class));
         group.addPage(new CrudPage("addresses", "Email Addresses", EmailAddress.class));
-
+        group.addPage(new CrudPage("smsLog", "SMS Log", SMSMessageLog.class));
         email.addPageGroup(group);
         return email;
     }

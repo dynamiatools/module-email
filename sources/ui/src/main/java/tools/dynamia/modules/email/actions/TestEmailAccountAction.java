@@ -70,13 +70,7 @@ public class TestEmailAccountAction extends AbstractCrudAction {
 
     @Override
     public void actionPerformed(CrudActionEvent evt) {
-        SMSService smsService = Containers.get().findObject(SMSService.class);
-
         EmailAccount account = (EmailAccount) evt.getData();
-        SMSMessage sms = new SMSMessage("+573187807221", "Prueba de mensaje");
-        sms.setCredentials(account.getSmsUsername(), account.getSmsPassword(), sms.getRegion());
-
-        smsService.send(sms);
         if (account != null) {
             Viewer viewer = createView(account);
             ZKUtil.showDialog("Test Message: " + account.getName(), viewer, "60%", null);
