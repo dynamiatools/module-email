@@ -45,6 +45,7 @@ import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailAddress;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.modules.email.services.EmailService;
+import tools.dynamia.modules.email.services.SMSService;
 import tools.dynamia.modules.saas.api.AccountServiceAPI;
 
 import javax.mail.internet.MimeMessage;
@@ -173,6 +174,8 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
             jmsi.send(mimeMessage);
 
             logger.info("Email sended succesfull!");
+            mailMessage.setSended(true);
+            mailMessage.setMailAccount(emailAccount);
             fireOnMailSended(mailMessage);
             logEmailAddress(emailAccount, mailMessage);
             return new EmailSendResult(mailMessage, true, "ok");
@@ -186,13 +189,23 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
     private String[] validateEmails(String[] bccsAsArray) {
         String[] array = Arrays.asList(bccsAsArray).stream().flatMap(e -> Arrays.stream(e.split(",")))
-                .map(e -> e.trim()).filter(e -> emailValidator.isValid(e, null)).toArray(String[]::new);
+                .map(String::trim).filter(e -> emailValidator.isValid(e, null)).toArray(String[]::new);
         return array;
     }
 
     @Override
     public EmailAccount getPreferredEmailAccount() {
-        EmailAccount account = crudService.findSingle(EmailAccount.class, "preferred", true);
+        return getPreferredEmailAccount(accountServiceAPI.getCurrentAccountId());
+    }
+
+    @Override
+    public EmailAccount getPreferredEmailAccount(Long accountId) {
+        QueryParameters params = QueryParameters.with("preferred", true);
+        if (accountId != null) {
+            params.add("accountId", accountId);
+        }
+
+        EmailAccount account = crudService.findSingle(EmailAccount.class, params);
         if (account == null) {
             logger.warn("There is not a preferred email account, trying to get System Account email account ");
             Long systemAccountId = accountServiceAPI.getSystemAccountId();
@@ -289,7 +302,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
         // Load model from providers
         if (message.getSource() != null && !message.getSource().isEmpty()) {
-            Containers.get().findObjects(EmailTemplateModelProvider.class, object -> object.equals(message.getSource()))
+            Containers.get().findObjects(EmailTemplateModelProvider.class, object -> object.getSource().equals(message.getSource()))
                     .forEach(p -> {
                         Map<String, Object> model = p.getModel(message);
                         if (model != null) {
@@ -439,7 +452,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
     @Override
     public void clearCache(EmailAccount account) {
-        logger.info("Removing mail sender cache for "+account);
+        logger.info("Removing mail sender cache for " + account);
         MAIL_SENDERS.remove(account.getId());
     }
 }

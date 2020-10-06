@@ -59,6 +59,7 @@ public class EmailMessage implements Serializable {
     private String replyTo;
     private String tag;
     private Map<String, Object> templateModel = new HashMap<>();
+    private boolean sended;
 
     public EmailMessage() {
     }
@@ -233,5 +234,13 @@ public class EmailMessage implements Serializable {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public void setSended(boolean sended) {
+        this.sended = sended;
+    }
+
+    public boolean isSended() {
+        return sended;
     }
 }

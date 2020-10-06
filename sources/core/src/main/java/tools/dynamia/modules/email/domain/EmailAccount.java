@@ -25,114 +25,169 @@ import tools.dynamia.domain.contraints.NotEmpty;
 import tools.dynamia.modules.saas.jpa.SimpleEntitySaaS;
 
 /**
- *
  * @author Mario Serrano Leones
  */
 @Entity
 @Table(name = "email_accounts")
 public class EmailAccount extends SimpleEntitySaaS {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3769420109733883374L;
-	@NotEmpty(message = "Enter account's name")
-	private String name;
-	@NotEmpty(message = "Enter account's username")
-	private String username;
-	private String password;
-	@NotEmpty(message = "Enter server host name or ip address")
-	private String serverAddress;
-	private String fromAddress;
-	private int port = 25;
-	private boolean useTTLS;
-	private boolean loginRequired;
-	private boolean preferred;
-	private String enconding;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 3769420109733883374L;
+    @NotEmpty(message = "Enter account's name")
+    private String name;
+    @NotEmpty(message = "Enter account's username")
+    private String username;
+    private String password;
+    @NotEmpty(message = "Enter server host name or ip address")
+    private String serverAddress;
+    private String fromAddress;
+    private int port = 25;
+    private boolean useTTLS;
+    private boolean loginRequired;
+    private boolean preferred;
+    private String enconding;
 
-	public String getName() {
-		return name;
-	}
+    private boolean smsEnabled;
+    private String smsUsername;
+    private String smsPassword;
+    private String smsRegion;
+    private String smsDefaultPrefix;
+    private String smsSenderID;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getServerAddress() {
-		return serverAddress;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setServerAddress(String serverAddress) {
-		this.serverAddress = serverAddress;
-	}
+    public String getServerAddress() {
+        return serverAddress;
+    }
 
-	public String getFromAddress() {
-		return fromAddress;
-	}
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
 
-	public void setFromAddress(String fromAddress) {
-		this.fromAddress = fromAddress;
-	}
+    public String getFromAddress() {
+        return fromAddress;
+    }
 
-	public int getPort() {
-		return port;
-	}
+    public void setFromAddress(String fromAddress) {
+        this.fromAddress = fromAddress;
+    }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+    public int getPort() {
+        return port;
+    }
 
-	public boolean isUseTTLS() {
-		return useTTLS;
-	}
+    public void setPort(int port) {
+        this.port = port;
+    }
 
-	public void setUseTTLS(boolean useTTLS) {
-		this.useTTLS = useTTLS;
-	}
+    public boolean isUseTTLS() {
+        return useTTLS;
+    }
 
-	public boolean isLoginRequired() {
-		return loginRequired;
-	}
+    public void setUseTTLS(boolean useTTLS) {
+        this.useTTLS = useTTLS;
+    }
 
-	public void setLoginRequired(boolean loginRequired) {
-		this.loginRequired = loginRequired;
-	}
+    public boolean isLoginRequired() {
+        return loginRequired;
+    }
 
-	public boolean isPreferred() {
-		return preferred;
-	}
+    public void setLoginRequired(boolean loginRequired) {
+        this.loginRequired = loginRequired;
+    }
 
-	public void setPreferred(boolean preferred) {
-		this.preferred = preferred;
-	}
+    public boolean isPreferred() {
+        return preferred;
+    }
 
-	public String getEnconding() {
-		return enconding;
-	}
+    public void setPreferred(boolean preferred) {
+        this.preferred = preferred;
+    }
 
-	public void setEnconding(String enconding) {
-		this.enconding = enconding;
-	}
+    public String getEnconding() {
+        return enconding;
+    }
 
-	@Override
-	public String toString() {
-		return String.format("%s (%s)", name, fromAddress);
-	}
+    public void setEnconding(String enconding) {
+        this.enconding = enconding;
+    }
+
+    public String getSmsUsername() {
+        return smsUsername;
+    }
+
+    public void setSmsUsername(String smsUsername) {
+        this.smsUsername = smsUsername;
+    }
+
+    public String getSmsPassword() {
+        return smsPassword;
+    }
+
+    public void setSmsPassword(String smsPassword) {
+        this.smsPassword = smsPassword;
+    }
+
+    public boolean isSmsEnabled() {
+        return smsEnabled;
+    }
+
+    public void setSmsEnabled(boolean smsEnabled) {
+        this.smsEnabled = smsEnabled;
+    }
+
+    public String getSmsDefaultPrefix() {
+        return smsDefaultPrefix;
+    }
+
+    public void setSmsDefaultPrefix(String smsDefaultPrefix) {
+        this.smsDefaultPrefix = smsDefaultPrefix;
+    }
+
+    public String getSmsRegion() {
+        return smsRegion;
+    }
+
+    public void setSmsRegion(String smsRegion) {
+        this.smsRegion = smsRegion;
+    }
+
+    public String getSmsSenderID() {
+        return smsSenderID;
+    }
+
+    public void setSmsSenderID(String smsSenderID) {
+        this.smsSenderID = smsSenderID;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s)", name, fromAddress);
+    }
+
 
 }

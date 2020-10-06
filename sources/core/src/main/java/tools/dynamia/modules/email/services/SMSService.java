@@ -1,7 +1,6 @@
 /*
- * Copyright (C)  2020. Dynamia Soluciones IT S.A.S - NIT 900302344-1
+ * Copyright (C)  2020. Dynamia Soluciones IT S.A.S - NIT 900302344-1 All Rights Reserved.
  * Colombia - South America
- *  All Rights Reserved.
  *
  * This file is free software: you can redistribute it and/or modify it  under the terms of the
  *  GNU Lesser General Public License (LGPL v3) as published by the Free Software Foundation,
@@ -15,14 +14,13 @@
  *
  */
 
-package tools.dynamia.modules.email;
+package tools.dynamia.modules.email.services;
 
-import java.util.Map;
+import tools.dynamia.modules.email.SMSMessage;
 
-public interface EmailTemplateModelProvider {
-
-	String getSource();
-
-	Map<String, Object> getModel(EmailMessage message);
-
+/**
+ * Simple SMS sender service
+ */
+public interface SMSService {
+    String send(SMSMessage message);
 }

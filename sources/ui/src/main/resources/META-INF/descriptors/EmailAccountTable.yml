@@ -1,17 +1,26 @@
 view: table
 beanClass: tools.dynamia.modules.email.domain.EmailAccount
-hidden: [id,password,site]
-sortFields: [preferred,name,username,serverAddress,port,fromAddress,useTTLS,loginRequired,enconding]
+autofields: false
 
 fields:
-   useTTLS:
-       label: TTLS
-       
-   preferred:
-       label: P
-       description: Preferred Account
-       component: iconimage
-       params:
-           trueIcon: star
-           falseIcon: staroff
-           width: 32px
+  preferred:
+    label: P
+    description: Preferred Account
+    component: iconimage
+    params:
+      trueIcon: star
+      falseIcon: staroff
+      width: 32px
+
+  name:
+  serverAddress:
+  fromAddress:
+
+  useTTLS:
+    label: TTLS
+
+  smsEnabled:
+    label: SMS
+
+  smsRegion:
+    label: Region

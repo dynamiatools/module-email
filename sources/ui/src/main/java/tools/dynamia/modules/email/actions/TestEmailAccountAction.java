@@ -32,8 +32,10 @@ import tools.dynamia.integration.Containers;
 import tools.dynamia.integration.ProgressMonitor;
 import tools.dynamia.modules.email.EmailMessage;
 import tools.dynamia.modules.email.EmailSendResult;
+import tools.dynamia.modules.email.SMSMessage;
 import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.services.EmailService;
+import tools.dynamia.modules.email.services.SMSService;
 import tools.dynamia.ui.MessageType;
 import tools.dynamia.ui.UIMessages;
 import tools.dynamia.viewers.ViewDescriptor;
@@ -68,7 +70,13 @@ public class TestEmailAccountAction extends AbstractCrudAction {
 
     @Override
     public void actionPerformed(CrudActionEvent evt) {
+        SMSService smsService = Containers.get().findObject(SMSService.class);
+
         EmailAccount account = (EmailAccount) evt.getData();
+        SMSMessage sms = new SMSMessage("+573187807221", "Prueba de mensaje");
+        sms.setCredentials(account.getSmsUsername(), account.getSmsPassword(), sms.getRegion());
+
+        smsService.send(sms);
         if (account != null) {
             Viewer viewer = createView(account);
             ZKUtil.showDialog("Test Message: " + account.getName(), viewer, "60%", null);

@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C)  2020. Dynamia Soluciones IT S.A.S - NIT 900302344-1
  * Colombia - South America
@@ -17,12 +18,17 @@
 
 package tools.dynamia.modules.email;
 
-import java.util.Map;
+/**
+ * Implement this class if you need listener sms message sending process. You also need annotated
+ * with @{@link tools.dynamia.integration.sterotypes.Listener}
+ *
+ * @author Mario Serrano Leones
+ */
+public interface SMSServiceListener {
 
-public interface EmailTemplateModelProvider {
+    void onMessageSending(SMSMessage message);
 
-	String getSource();
+    void onMessageSended(SMSMessage message);
 
-	Map<String, Object> getModel(EmailMessage message);
 
 }

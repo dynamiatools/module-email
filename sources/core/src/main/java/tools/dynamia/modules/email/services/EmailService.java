@@ -67,6 +67,13 @@ public interface EmailService {
     EmailAccount getPreferredEmailAccount();
 
     /**
+     * Get preferred email account in SaaS account ID
+     *
+     * @return
+     */
+    EmailAccount getPreferredEmailAccount(Long accountId);
+
+    /**
      * Find email template by name in current SaaS account. If autocreate is true a new blank email template is created
      *
      * @param name
