@@ -23,7 +23,7 @@
     <artifactId>tools.dynamia.modules.email.parent</artifactId>
     <name>DynamiaModules - Email Parent</name>
     <packaging>pom</packaging>
-    <version>2.3.0</version>
+    <version>2.4.0</version>
     <description>DynamiaTools extension for sending async emails (SMTP) and sms messages (AWS SNS)</description>
     <inceptionYear>2018</inceptionYear>
     <url>https://www.dynamia.tools/modules/email</url>
@@ -55,10 +55,10 @@
     </scm>
 
     <properties>
-        <dynamiatools.version>4.0.0.RC</dynamiatools.version>
+        <dynamiatools.version>4.0.0.Final</dynamiatools.version>
         <spring.version>5.1.5.RELEASE</spring.version>
         <!-- Versiones de Modulos -->
-        <saas.version>2.4.1</saas.version>
+        <saas.version>2.5.0</saas.version>
 
         <java.version>1.8</java.version>
         <maven.compiler>3.8.1</maven.compiler>
@@ -150,7 +150,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
 
