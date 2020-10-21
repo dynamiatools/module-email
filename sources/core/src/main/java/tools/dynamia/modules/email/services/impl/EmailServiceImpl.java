@@ -45,7 +45,6 @@ import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailAddress;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.modules.email.services.EmailService;
-import tools.dynamia.modules.email.services.SMSService;
 import tools.dynamia.modules.saas.api.AccountServiceAPI;
 
 import javax.mail.internet.MimeMessage;
@@ -97,10 +96,12 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
             mailMessage.setTemplate(getTemplateByName(mailMessage.getTemplateName()));
         }
 
-        if (mailMessage.getTemplate() != null && !mailMessage.getTemplate().isEnabled()) {
+        if (mailMessage.getTemplate() != null && !mailMessage.getTemplate().isEnabled() && !mailMessage.isTemplateOptional()) {
             String msg = "Template " + mailMessage.getTemplate().getName() + " is not Enabled";
             logger.warn(msg);
             return CompletableFuture.completedFuture(new EmailSendResult(mailMessage, false, msg));
+        }else{
+            mailMessage.setTemplate(null);
         }
 
         final EmailAccount finalAccount = account;

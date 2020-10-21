@@ -60,6 +60,7 @@ public class EmailMessage implements Serializable {
     private String tag;
     private Map<String, Object> templateModel = new HashMap<>();
     private boolean sended;
+    private boolean templateOptional;
 
     public EmailMessage() {
     }
@@ -242,5 +243,13 @@ public class EmailMessage implements Serializable {
 
     public boolean isSended() {
         return sended;
+    }
+
+    public boolean isTemplateOptional() {
+        return templateOptional;
+    }
+
+    public void setTemplateOptional(boolean templateOptional) {
+        this.templateOptional = templateOptional;
     }
 }
