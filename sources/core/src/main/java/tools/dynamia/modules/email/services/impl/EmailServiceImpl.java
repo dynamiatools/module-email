@@ -96,12 +96,14 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
             mailMessage.setTemplate(getTemplateByName(mailMessage.getTemplateName()));
         }
 
-        if (mailMessage.getTemplate() != null && !mailMessage.getTemplate().isEnabled() && !mailMessage.isTemplateOptional()) {
-            String msg = "Template " + mailMessage.getTemplate().getName() + " is not Enabled";
-            logger.warn(msg);
-            return CompletableFuture.completedFuture(new EmailSendResult(mailMessage, false, msg));
-        }else{
-            mailMessage.setTemplate(null);
+        if (mailMessage.getTemplate() != null && !mailMessage.getTemplate().isEnabled()) {
+            if (mailMessage.isTemplateOptional()) {
+                mailMessage.setTemplate(null);
+            } else {
+                String msg = "Template " + mailMessage.getTemplate().getName() + " is not Enabled";
+                logger.warn(msg);
+                return CompletableFuture.completedFuture(new EmailSendResult(mailMessage, false, msg));
+            }
         }
 
         final EmailAccount finalAccount = account;
