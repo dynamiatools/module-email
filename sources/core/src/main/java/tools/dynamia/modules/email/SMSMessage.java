@@ -108,6 +108,9 @@ public class SMSMessage implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+        if (this.phoneNumber != null) {
+            this.phoneNumber = this.phoneNumber.trim().replace(" ", "");
+        }
     }
 
     public String getText() {
