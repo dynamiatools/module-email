@@ -82,3 +82,7 @@ will get the preferred account automatically. On the other hand, you can set up 
 
 If the `EmailMessage` has a `EmailTemplate` and this template has configured an SMS message, when you send 
 the email the SMS will be sent too.
+
+## License
+
+DynamiaTools Email is available under Apache 2 License
