@@ -11,10 +11,13 @@ fields:
   port:
   fromAddress:
   enconding:
+  loginRequired:
   useTTLS:
     label: TTLS
+  useSSL:
+    label: SSL
 
-  loginRequired:
+
 
 
   smsEnabled:

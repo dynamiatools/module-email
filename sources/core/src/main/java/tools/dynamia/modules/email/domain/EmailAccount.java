@@ -18,11 +18,11 @@
 
 package tools.dynamia.modules.email.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import tools.dynamia.domain.contraints.NotEmpty;
 import tools.dynamia.modules.saas.jpa.SimpleEntitySaaS;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @author Mario Serrano Leones
@@ -55,6 +55,7 @@ public class EmailAccount extends SimpleEntitySaaS {
     private String smsRegion;
     private String smsDefaultPrefix;
     private String smsSenderID;
+    private boolean useSSL;
 
     public String getName() {
         return name;
@@ -190,4 +191,11 @@ public class EmailAccount extends SimpleEntitySaaS {
     }
 
 
+    public boolean isUseSSL() {
+        return useSSL;
+    }
+
+    public void setUseSSL(boolean useSSL) {
+        this.useSSL = useSSL;
+    }
 }

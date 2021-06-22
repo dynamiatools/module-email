@@ -276,7 +276,11 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
             jmp.setProperty("mail.smtp.auth", String.valueOf(account.isLoginRequired()));
             jmp.setProperty("mail.smtp.from", account.getFromAddress());
             jmp.setProperty("mail.smtp.port", String.valueOf(account.getPort()));
-            jmp.setProperty("mail.smtp.starttls.enable", String.valueOf(account.isUseTTLS()));
+            if (account.isUseTTLS()) {
+                jmp.setProperty("mail.smtp.starttls.enable", "true");
+            }else if(account.isUseSSL()){
+                jmp.setProperty("mail.smtp.ssl.enable", "true");
+            }
             jmp.setProperty("mail.smtp.host", account.getServerAddress());
             jmp.setProperty("mail.from", account.getFromAddress());
             jmp.setProperty("mail.personal", account.getName());

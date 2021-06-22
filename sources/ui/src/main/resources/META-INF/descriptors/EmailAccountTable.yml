@@ -19,5 +19,8 @@ fields:
   useTTLS:
     label: TTLS
 
+  useSSL:
+    label: SSL
+
   smsRegion:
     label: Region
