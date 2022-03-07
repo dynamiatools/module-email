@@ -55,7 +55,7 @@
     </scm>
 
     <properties>
-        <dynamiatools.version>4.0.4</dynamiatools.version>
+        <dynamiatools.version>4.0.6</dynamiatools.version>
         <spring.version>5.3.14</spring.version>
         <!-- Versiones de Modulos -->
         <saas.version>2.7.2</saas.version>

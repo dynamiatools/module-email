@@ -36,6 +36,7 @@ import tools.dynamia.modules.email.services.EmailService;
 
 /**
  * Email message helper. Use this class to create a setup an email message
+ *
  * @author Mario Serrano Leones
  */
 public class EmailMessage implements Serializable {
@@ -44,9 +45,9 @@ public class EmailMessage implements Serializable {
      *
      */
     private static final long serialVersionUID = -7780849220746433667L;
-    private final Set<String> tos = new HashSet<String>();
-    private final Set<String> ccs = new HashSet<String>();
-    private final Set<String> bccs = new HashSet<String>();
+    private final Set<String> tos = new HashSet<>();
+    private final Set<String> ccs = new HashSet<>();
+    private final Set<String> bccs = new HashSet<>();
     private String to;
     private String subject;
     private String content;
@@ -61,6 +62,7 @@ public class EmailMessage implements Serializable {
     private Map<String, Object> templateModel = new HashMap<>();
     private boolean sended;
     private boolean templateOptional;
+    private Long accountId;
 
     public EmailMessage() {
     }
@@ -252,4 +254,13 @@ public class EmailMessage implements Serializable {
     public void setTemplateOptional(boolean templateOptional) {
         this.templateOptional = templateOptional;
     }
+
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
 }

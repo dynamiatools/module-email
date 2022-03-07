@@ -40,6 +40,7 @@ public class SMSMessage implements Serializable {
     private String region = "us-east-1";
     private Long accountId;
     private String result;
+    private String messageId;
     private boolean sended;
 
     public SMSMessage() {
@@ -160,5 +161,13 @@ public class SMSMessage implements Serializable {
 
     public boolean isSended() {
         return sended;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 }

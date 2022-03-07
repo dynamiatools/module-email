@@ -59,6 +59,8 @@ public interface EmailService {
      */
     void setPreferredEmailAccount(EmailAccount account);
 
+    EmailSendResult sendAndWait(EmailMessage mailMessage);
+
     /**
      * Get preferred email account in current SaaS account
      *

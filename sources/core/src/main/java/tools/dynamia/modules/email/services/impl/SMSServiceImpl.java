@@ -43,12 +43,7 @@ public class SMSServiceImpl extends AbstractService implements SMSService {
     public String send(SMSMessage message) {
         validate(message);
 
-        AWSCredentialsProvider credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(message.getUsername(), message.getPassword()));
-
-        AmazonSNSAsync snsClient = AmazonSNSAsyncClientBuilder.standard()
-                .withCredentials(credentials)
-                .withRegion(message.getRegion())
-                .build();
+        AmazonSNSAsync snsClient = buildSNSClient(message);
 
 
         Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
@@ -77,11 +72,22 @@ public class SMSServiceImpl extends AbstractService implements SMSService {
                 message.getAccountId())
                 .save();
 
+
         message.setResult(result.getMessageId());
+        message.setMessageId(result.getMessageId());
         message.setSended(true);
         log("SMS Sended - " + message.getPhoneNumber() + "  message id: " + message.getResult());
         fireSendedListener(message);
         return message.getResult();
+    }
+
+    private AmazonSNSAsync buildSNSClient(SMSMessage message) {
+        AWSCredentialsProvider credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(message.getUsername(), message.getPassword()));
+
+        return AmazonSNSAsyncClientBuilder.standard()
+                .withCredentials(credentials)
+                .withRegion(message.getRegion())
+                .build();
     }
 
     private void fireSendingListener(SMSMessage smsMessage) {

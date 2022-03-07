@@ -51,7 +51,6 @@ import javax.mail.internet.MimeMessage;
 import java.io.StringWriter;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 /**
@@ -78,17 +77,27 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
         return send(new EmailMessage(to, subject, content));
     }
 
-    @Override
     public Future<EmailSendResult> send(final EmailMessage mailMessage) {
+        return SchedulerUtil.runWithResult(new TaskWithResult<>() {
+
+            @Override
+            public EmailSendResult doWorkWithResult() {
+                return sendAndWait(mailMessage);
+            }
+        });
+    }
+
+    @Override
+    public EmailSendResult sendAndWait(final EmailMessage mailMessage) {
 
         EmailAccount account = mailMessage.getMailAccount();
         if (account == null) {
-            account = getPreferredEmailAccount();
+            account = mailMessage.getAccountId() != null ? getPreferredEmailAccount(mailMessage.getAccountId()) : getPreferredEmailAccount();
         }
 
         if (account == null) {
             logger.warn("No email account to send " + mailMessage);
-            return CompletableFuture.completedFuture(new EmailSendResult(mailMessage, false, "No email account to sende"));
+            return new EmailSendResult(mailMessage, false, "No email account to sended");
         }
 
         if (mailMessage.getTemplate() == null && mailMessage.getTemplateName() != null
@@ -102,26 +111,20 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
             } else {
                 String msg = "Template " + mailMessage.getTemplate().getName() + " is not Enabled";
                 logger.warn(msg);
-                return CompletableFuture.completedFuture(new EmailSendResult(mailMessage, false, msg));
+                return new EmailSendResult(mailMessage, false, msg);
             }
         }
 
-        final EmailAccount finalAccount = account;
+
         logger.info("Sending e-mail " + mailMessage);
         try {
-            return SchedulerUtil.runWithResult(new TaskWithResult<EmailSendResult>() {
-
-                @Override
-                public EmailSendResult doWorkWithResult() {
-                    return processAndSendEmail(mailMessage, finalAccount);
-                }
-            });
+            return processAndSendEmail(mailMessage, account);
         } catch (TaskException e) {
-            e.printStackTrace();
-            logger.error("Error scheduling email task", e);
-            return CompletableFuture.completedFuture(new EmailSendResult(mailMessage, e));
+            logger.error("Error sending email task", e);
+            return new EmailSendResult(mailMessage, e);
         }
     }
+
 
     private EmailSendResult processAndSendEmail(EmailMessage mailMessage, EmailAccount emailAccount) {
         try {
@@ -280,7 +283,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
                 jmp.setProperty("mail.smtp.starttls.enable", "true");
                 jmp.setProperty("mail.smtp.starttls.required", "true");
                 jmp.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
-            }else if(account.isUseSSL()){
+            } else if (account.isUseSSL()) {
                 jmp.setProperty("mail.smtp.ssl.enable", "true");
             }
             jmp.setProperty("mail.smtp.host", account.getServerAddress());

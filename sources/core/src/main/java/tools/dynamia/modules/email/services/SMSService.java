@@ -23,5 +23,6 @@ import tools.dynamia.modules.email.SMSMessage;
  * Simple SMS sender service
  */
 public interface SMSService {
+
     String send(SMSMessage message);
 }
