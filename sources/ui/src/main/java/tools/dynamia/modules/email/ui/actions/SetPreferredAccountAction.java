@@ -16,10 +16,9 @@
  * limitations under the License.
  */
 
-package tools.dynamia.modules.email.actions;
+package tools.dynamia.modules.email.ui.actions;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import tools.dynamia.actions.InstallAction;
 import tools.dynamia.commons.ApplicableClass;
 import tools.dynamia.crud.AbstractCrudAction;

@@ -15,20 +15,17 @@
  * limitations under the License.
  */
 
-package tools.dynamia.modules.email;
-
-import java.util.Map;
+package tools.dynamia.modules.email.ui;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import tools.dynamia.integration.ms.MapMessage;
-import tools.dynamia.integration.ms.Message;
-import tools.dynamia.integration.ms.MessageChannelExchange;
-import tools.dynamia.integration.ms.MessageEvent;
-import tools.dynamia.integration.ms.MessageListener;
+import tools.dynamia.integration.ms.*;
 import tools.dynamia.integration.sterotypes.Listener;
+import tools.dynamia.modules.email.EmailConfig;
+import tools.dynamia.modules.email.EmailMessage;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.modules.email.services.EmailService;
+
+import java.util.Map;
 
 @Listener
 @MessageChannelExchange(channel = EmailConfig.EMAIL_CHANNEL, broadcastReceive = false)

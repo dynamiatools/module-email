@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package tools.dynamia.modules.email.actions;
+package tools.dynamia.modules.email.ui.actions;
 
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zul.Iframe;

@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package tools.dynamia.modules.email.actions;
+package tools.dynamia.modules.email.ui.actions;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.zul.Messagebox;
@@ -28,14 +28,11 @@ import tools.dynamia.commons.ApplicableClass;
 import tools.dynamia.crud.AbstractCrudAction;
 import tools.dynamia.crud.CrudActionEvent;
 import tools.dynamia.crud.CrudState;
-import tools.dynamia.integration.Containers;
 import tools.dynamia.integration.ProgressMonitor;
 import tools.dynamia.modules.email.EmailMessage;
 import tools.dynamia.modules.email.EmailSendResult;
-import tools.dynamia.modules.email.SMSMessage;
 import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.services.EmailService;
-import tools.dynamia.modules.email.services.SMSService;
 import tools.dynamia.ui.MessageType;
 import tools.dynamia.ui.UIMessages;
 import tools.dynamia.viewers.ViewDescriptor;

@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-package tools.dynamia.modules.email;
+package tools.dynamia.modules.email.ui;
 
 import org.springframework.stereotype.Component;
-
 import tools.dynamia.crud.CrudPage;
 import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailAddress;
@@ -37,7 +36,7 @@ public class EmailInstaller implements ModuleProvider {
         Module email = Module.getRef("system");
 
         PageGroup group = new PageGroup("email", "Email");
-        group.addPage(new CrudPage("accounts", "Accounts", EmailAccount.class));
+        group.addPage(new CrudPage("accounts", "Accounts", EmailAccount.class).longName("Email / SMS Accounts"));
         group.addPage(new CrudPage("templates", "Templates", EmailTemplate.class));
         group.addPage(new CrudPage("addresses", "Email Addresses", EmailAddress.class));
         group.addPage(new CrudPage("smsLog", "SMS Log", SMSMessageLog.class));

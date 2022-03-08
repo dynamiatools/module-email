@@ -56,7 +56,7 @@ public class OTPMessage implements Serializable {
      * Generate 6 length numeric code using random integer
      */
     public void generateNumericCode() {
-        int number = 10000 + new Random().nextInt(90000);
+        int number = 100000 + new Random().nextInt(900000);
         otp = String.valueOf(number);
     }
 
