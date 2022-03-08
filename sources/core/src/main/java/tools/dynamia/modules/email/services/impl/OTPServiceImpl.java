@@ -52,10 +52,16 @@ public class OTPServiceImpl implements OTPService {
         });
     }
 
-    private SMSMessage buildSMSMessage(EmailAccount emailAccount, OTPMessage message) {
+    private SMSMessage buildSMSMessage(EmailAccount account, OTPMessage message) {
         if (message.isSendSMS() && message.getTargetPhoneNumber() != null) {
-            var sms = new SMSMessage(message.getTargetPhoneNumber(), message.getContent(), emailAccount.getSmsSenderID(), true);
-            sms.setCredentials(emailAccount.getSmsUsername(), emailAccount.getSmsPassword(), emailAccount.getSmsRegion());
+            var sms = new SMSMessage(message.getTargetPhoneNumber(), message.getContent(), account.getSmsSenderID(), false);
+            sms.setCredentials(account.getSmsUsername(), account.getSmsPassword(), account.getSmsRegion());
+            if (account.getSmsDefaultPrefix() != null && !account.getSmsDefaultPrefix().isEmpty()) {
+                String prefix = account.getSmsDefaultPrefix();
+                if (!sms.getPhoneNumber().startsWith("+") && !sms.getPhoneNumber().startsWith(prefix)) {
+                    sms.setPhoneNumber(prefix + sms.getPhoneNumber());
+                }
+            }
             return sms;
         } else {
             return null;

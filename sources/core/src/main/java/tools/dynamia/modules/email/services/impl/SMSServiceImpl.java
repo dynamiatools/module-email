@@ -22,6 +22,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sns.AmazonSNSAsync;
 import com.amazonaws.services.sns.AmazonSNSAsyncClientBuilder;
+import com.amazonaws.services.sns.model.AmazonSNSException;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
@@ -62,23 +63,31 @@ public class SMSServiceImpl extends AbstractService implements SMSService {
 
         log("Sending SMS to " + message.getPhoneNumber());
         fireSendingListener(message);
-        PublishResult result = snsClient.publish(new PublishRequest()
-                .withMessage(message.getText())
-                .withPhoneNumber(message.getPhoneNumber())
-                .withMessageAttributes(smsAttributes));
+        try {
+            PublishResult result = snsClient.publish(new PublishRequest()
+                    .withMessage(message.getText())
+                    .withPhoneNumber(message.getPhoneNumber())
+                    .withMessageAttributes(smsAttributes));
 
-        new SMSMessageLog(message.getPhoneNumber(),
-                message.getText(), result.getMessageId(),
-                message.getAccountId())
-                .save();
+            log("SMS Result: " + result);
+            log("Creating log for sms message " + message.getPhoneNumber());
+            new SMSMessageLog(message.getPhoneNumber(),
+                    message.getText(), result.getMessageId(),
+                    message.getAccountId())
+                    .save();
 
 
-        message.setResult(result.getMessageId());
-        message.setMessageId(result.getMessageId());
-        message.setSended(true);
-        log("SMS Sended - " + message.getPhoneNumber() + "  message id: " + message.getResult());
-        fireSendedListener(message);
-        return message.getResult();
+            message.setResult(result.getMessageId());
+            message.setMessageId(result.getMessageId());
+            message.setSended(true);
+            log("SMS Sended - " + message.getPhoneNumber() + "  message id: " + message.getResult());
+            fireSendedListener(message);
+            return message.getResult();
+        } catch (AmazonSNSException ex) {
+            message.setResult(ex.getMessage());
+            log("Error sending sms to " + message.getPhoneNumber() + ": " + ex.getMessage(), ex);
+            return null;
+        }
     }
 
     private AmazonSNSAsync buildSNSClient(SMSMessage message) {
