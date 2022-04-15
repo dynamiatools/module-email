@@ -26,7 +26,7 @@
 	<name>DynamiaModules - Email UI</name>
 	<artifactId>tools.dynamia.modules.email.ui</artifactId>
 	<version>2.6.1</version>
-	<url>http://www.dynamiasoluciones.com</url>
+	<url>https://www.dynamiasoluciones.com</url>
 
 	<dependencies>
 
