@@ -55,10 +55,10 @@
     </scm>
 
     <properties>
-        <dynamiatools.version>4.0.7</dynamiatools.version>
+        <dynamiatools.version>4.0.8</dynamiatools.version>
         <spring.version>5.3.18</spring.version>
         <!-- Versiones de Modulos -->
-        <saas.version>2.7.2</saas.version>
+        <saas.version>2.7.3</saas.version>
 
         <java.version>11</java.version>
         <maven.compiler>3.8.1</maven.compiler>
