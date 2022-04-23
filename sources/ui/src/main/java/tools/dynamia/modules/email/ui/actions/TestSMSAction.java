@@ -44,6 +44,7 @@ public class TestSMSAction extends AbstractCrudAction {
 
     private Viewer createView(EmailAccount account) {
         ViewDescriptor descriptor = viewDescriptor("form", SMSMessage.class, false)
+                .id("testSMSForm")
                 .fields(
                         field("phoneNumber"),
                         field("text"),

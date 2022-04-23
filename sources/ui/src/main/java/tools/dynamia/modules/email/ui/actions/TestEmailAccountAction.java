@@ -88,6 +88,7 @@ public class TestEmailAccountAction extends AbstractCrudAction {
 
     private Viewer createView(EmailAccount account) {
         ViewDescriptor descriptor = viewDescriptor("form", EmailMessage.class, false)
+                .id("testEmailAccountForm")
                 .fields(field("to"),
                         field("subject"),
                         field("content")
