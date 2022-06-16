@@ -52,15 +52,19 @@ public class OTPServiceImpl implements OTPService {
         });
     }
 
-    private SMSMessage buildSMSMessage(EmailAccount account, OTPMessage message) {
+    private SMSMessage buildSMSMessage(EmailAccount emailAccount, OTPMessage message) {
         if (message.isSendSMS() && message.getTargetPhoneNumber() != null) {
-            var sms = new SMSMessage(message.getTargetPhoneNumber(), message.getContent(), account.getSmsSenderID(), false);
-            sms.setCredentials(account.getSmsUsername(), account.getSmsPassword(), account.getSmsRegion());
-            if (account.getSmsDefaultPrefix() != null && !account.getSmsDefaultPrefix().isEmpty()) {
-                String prefix = account.getSmsDefaultPrefix();
+            var sms = new SMSMessage(message.getTargetPhoneNumber(), message.getContent(), emailAccount.getSmsSenderID(), false);
+            sms.setCredentials(emailAccount.getSmsUsername(), emailAccount.getSmsPassword(), emailAccount.getSmsRegion());
+            if (emailAccount.getSmsDefaultPrefix() != null && !emailAccount.getSmsDefaultPrefix().isEmpty()) {
+                String prefix = emailAccount.getSmsDefaultPrefix();
                 if (!sms.getPhoneNumber().startsWith("+") && !sms.getPhoneNumber().startsWith(prefix)) {
                     sms.setPhoneNumber(prefix + sms.getPhoneNumber());
                 }
+            }
+            sms.setAccountId(message.getAccountId());
+            if (sms.getAccountId() == null) {
+                sms.setAccountId(emailAccount.getId());
             }
             return sms;
         } else {
@@ -72,7 +76,10 @@ public class OTPServiceImpl implements OTPService {
         if (message.isSendEmail() && message.getTargetEmail() != null && message.getEmailSubject() != null) {
             var msg = new EmailMessage(message.getTargetEmail(), message.getEmailSubject(), message.getContent());
             msg.setMailAccount(emailAccount);
-            msg.setAccountId(emailAccount.getAccountId());
+            msg.setAccountId(message.getAccountId());
+            if (msg.getAccountId() == null) {
+                msg.setAccountId(emailAccount.getAccountId());
+            }
             return msg;
         }
         return null;
