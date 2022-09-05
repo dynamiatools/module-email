@@ -137,6 +137,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
             String[] tosAsArray = validateEmails(mailMessage.getTosAsArray());
             if (mailMessage.getTo() != null && !mailMessage.getTo().isEmpty()) {
+                mailMessage.setTo(mailMessage.getTo().replace(";", ","));
                 helper.setTo(mailMessage.getTo().split(","));
             } else {
                 if (!mailMessage.getTos().isEmpty())
