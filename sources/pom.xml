@@ -60,7 +60,7 @@
         <saas.version>2.8.0</saas.version>
         <maven.compiler>3.8.1</maven.compiler>
         <source.encoding>UTF-8</source.encoding>
-        <springboot.version>2.7.2</springboot.version>
+        <springboot.version>2.7.3</springboot.version>
         <aws.version>1.12.297</aws.version>
     </properties>
 
