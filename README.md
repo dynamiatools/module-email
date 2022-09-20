@@ -28,7 +28,7 @@ Add the following dependencies to project classpath
 <dependency>
     <groupId>tools.dynamia.modules</groupId>
     <artifactId>tools.dynamia.modules.email</artifactId>
-    <version>2.5.0</version>
+    <version>2.7.0</version>
 </dependency>
 ```
 
@@ -37,7 +37,7 @@ Add the following dependencies to project classpath
 <dependency>
     <groupId>tools.dynamia.modules</groupId>
     <artifactId>tools.dynamia.modules.email.ui</artifactId>
-    <version>2.5.0</version>
+    <version>2.7.0</version>
 </dependency>
 
 ```
@@ -45,8 +45,8 @@ Add the following dependencies to project classpath
 **Gradle**
 
 ```groovy
-compile 'tools.dynamia.modules:tools.dynamia.modules.email:2.5.0'
-compile 'tools.dynamia.modules:tools.dynamia.modules.email.ui:2.5.0'
+compile 'tools.dynamia.modules:tools.dynamia.modules.email:2.7.0'
+compile 'tools.dynamia.modules:tools.dynamia.modules.email.ui:2.7.0'
 ```
 
 ## Usage
