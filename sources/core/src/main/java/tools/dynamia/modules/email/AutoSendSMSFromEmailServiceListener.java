@@ -28,17 +28,13 @@ import tools.dynamia.modules.email.services.SMSService;
 import tools.dynamia.templates.VelocityTemplateEngine;
 
 @Listener
-public class AutoSendSMSFromEmailServiceListener implements EmailServiceListener {
+public class AutoSendSMSFromEmailServiceListener extends EmailServiceListenerAdapter {
 
     @Autowired
     private SMSService smsService;
 
     private LoggingService logger = new SLF4JLoggingService(AutoSendSMSFromEmailServiceListener.class);
 
-    @Override
-    public void onMailSending(EmailMessage message) {
-        //ignore
-    }
 
     @Override
     public void onMailSended(EmailMessage message) {
@@ -73,10 +69,5 @@ public class AutoSendSMSFromEmailServiceListener implements EmailServiceListener
 
     private String parse(EmailMessage message, String text) {
         return new VelocityTemplateEngine().evaluate(text, message.getTemplateModel());
-    }
-
-    @Override
-    public void onMailSendFail(EmailMessage message, Throwable cause) {
-//ignore
     }
 }

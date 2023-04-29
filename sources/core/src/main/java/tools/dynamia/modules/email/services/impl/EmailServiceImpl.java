@@ -132,6 +132,10 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
             if (mailMessage.getTemplate() != null) {
                 processTemplate(mailMessage);
             }
+
+
+            fireOnMailProcessing(mailMessage);
+
             JavaMailSenderImpl jmsi = (JavaMailSenderImpl) createMailSender(emailAccount);
             MimeMessage mimeMessage = jmsi.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
@@ -388,6 +392,13 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
             }
         }
         return null;
+    }
+
+    private void fireOnMailProcessing(EmailMessage message) {
+        Collection<EmailServiceListener> listeners = Containers.get().findObjects(EmailServiceListener.class);
+        for (EmailServiceListener listener : listeners) {
+            listener.onMailProcessing(message);
+        }
     }
 
     private void fireOnMailSending(EmailMessage message) {

@@ -26,10 +26,33 @@ package tools.dynamia.modules.email;
  */
 public interface EmailServiceListener {
 
+    /**
+     * Executed after email templates and data is process
+     *
+     * @param message
+     */
+    void onMailProcessing(EmailMessage message);
+
+    /**
+     * Executed just before email is send
+     *
+     * @param message
+     */
     void onMailSending(EmailMessage message);
 
+    /**
+     * Executed after email is sended succefull
+     *
+     * @param message
+     */
     void onMailSended(EmailMessage message);
 
+    /**
+     * Executed if something explode sending the email message
+     *
+     * @param message
+     * @param cause
+     */
     void onMailSendFail(EmailMessage message, Throwable cause);
 
 }
