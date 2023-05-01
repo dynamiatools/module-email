@@ -21,8 +21,8 @@ package tools.dynamia.modules.email.domain;
 import tools.dynamia.domain.contraints.NotEmpty;
 import tools.dynamia.modules.saas.jpa.SimpleEntitySaaS;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 /**
  * @author Mario Serrano Leones

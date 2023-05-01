@@ -19,8 +19,8 @@ package tools.dynamia.modules.email.domain;
 
 import tools.dynamia.modules.saas.jpa.BaseEntitySaaS;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "email_sms_log")

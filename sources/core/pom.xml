@@ -22,12 +22,12 @@
     <parent>
         <artifactId>tools.dynamia.modules.email.parent</artifactId>
         <groupId>tools.dynamia.modules</groupId>
-        <version>2.8.0</version>
+        <version>3.0.0</version>
     </parent>
 
     <artifactId>tools.dynamia.modules.email</artifactId>
     <name>DynamiaModules - Email</name>
-    <version>2.8.0</version>
+    <version>3.0.0</version>
     <url>https://www.dynamiasoluciones.com</url>
 
 
@@ -61,14 +61,18 @@
             <artifactId>spring-context-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <version>1.6.2</version>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -18,6 +18,7 @@
 
 package tools.dynamia.modules.email.services.impl;
 
+import jakarta.mail.internet.MimeMessage;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,17 +41,26 @@ import tools.dynamia.integration.Containers;
 import tools.dynamia.integration.scheduling.SchedulerUtil;
 import tools.dynamia.integration.scheduling.TaskException;
 import tools.dynamia.integration.scheduling.TaskWithResult;
-import tools.dynamia.modules.email.*;
+import tools.dynamia.modules.email.EmailAttachment;
+import tools.dynamia.modules.email.EmailMessage;
+import tools.dynamia.modules.email.EmailSendResult;
+import tools.dynamia.modules.email.EmailServiceException;
+import tools.dynamia.modules.email.EmailServiceListener;
+import tools.dynamia.modules.email.EmailTemplateModelProvider;
 import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailAddress;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.modules.email.services.EmailService;
 import tools.dynamia.modules.saas.api.AccountServiceAPI;
 
-import javax.mail.internet.MimeMessage;
 import java.io.StringWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 /**
