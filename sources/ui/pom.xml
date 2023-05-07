@@ -32,7 +32,7 @@
 
 		<dependency>
 			<groupId>tools.dynamia</groupId>
-			<artifactId>tools.dynamia.zk.crud</artifactId>
+			<artifactId>tools.dynamia.zk</artifactId>
 			<version>${dynamiatools.version}</version>
 		</dependency>
 		<dependency>
