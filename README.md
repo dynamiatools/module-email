@@ -1,5 +1,6 @@
 [![Maven Central](https://img.shields.io/maven-central/v/tools.dynamia.modules/tools.dynamia.modules.email)](https://search.maven.org/search?q=tools.dynamia.modules.email)
-![Java Version Required](https://img.shields.io/badge/java-%3E%3D11-blue)
+![Java Version Required](https://img.shields.io/badge/java-17-blue)
+[![Maven Build](https://github.com/dynamiatools/module-email/actions/workflows/maven.yml/badge.svg)](https://github.com/dynamiatools/module-email/actions/workflows/maven.yml)
 
 # Email and SMS Module
 
@@ -28,7 +29,7 @@ Add the following dependencies to project classpath
 <dependency>
     <groupId>tools.dynamia.modules</groupId>
     <artifactId>tools.dynamia.modules.email</artifactId>
-    <version>2.8.0</version>
+    <version>3.0.0</version>
 </dependency>
 ```
 
@@ -37,7 +38,7 @@ Add the following dependencies to project classpath
 <dependency>
     <groupId>tools.dynamia.modules</groupId>
     <artifactId>tools.dynamia.modules.email.ui</artifactId>
-    <version>2.8.0</version>
+    <version>3.0.0</version>
 </dependency>
 
 ```
@@ -45,8 +46,8 @@ Add the following dependencies to project classpath
 **Gradle**
 
 ```groovy
-compile 'tools.dynamia.modules:tools.dynamia.modules.email:2.8.0'
-compile 'tools.dynamia.modules:tools.dynamia.modules.email.ui:2.8.0'
+compile 'tools.dynamia.modules:tools.dynamia.modules.email:3.0.0'
+compile 'tools.dynamia.modules:tools.dynamia.modules.email.ui:3.0.0'
 ```
 
 ## Usage
