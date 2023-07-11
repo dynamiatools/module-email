@@ -300,6 +300,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
                 jmp.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
             } else if (account.isUseSSL()) {
                 jmp.setProperty("mail.smtp.ssl.enable", "true");
+                jmp.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
             }
             jmp.setProperty("mail.smtp.host", account.getServerAddress());
             jmp.setProperty("mail.from", account.getFromAddress());
