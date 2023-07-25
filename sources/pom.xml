@@ -56,11 +56,11 @@
 
     <properties>
         <java.version>17</java.version>
-        <dynamiatools.version>5.0.4</dynamiatools.version>
+        <dynamiatools.version>5.0.5</dynamiatools.version>
         <saas.version>3.0.0</saas.version>
         <maven.compiler>3.11.0</maven.compiler>
         <source.encoding>UTF-8</source.encoding>
-        <springboot.version>3.0.8</springboot.version>
+        <springboot.version>3.0.9</springboot.version>
         <aws.version>1.12.504</aws.version>
     </properties>
 
