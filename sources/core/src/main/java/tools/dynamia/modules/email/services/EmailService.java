@@ -84,6 +84,8 @@ public interface EmailService {
      */
     EmailTemplate getTemplateByName(String name, boolean autocreate);
 
+    EmailTemplate getTemplateByName(String name, boolean autocreate, Long accountId);
+
     /**
      * Find email template by name
      *

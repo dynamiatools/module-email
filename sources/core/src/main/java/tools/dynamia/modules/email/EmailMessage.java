@@ -18,6 +18,13 @@
 
 package tools.dynamia.modules.email;
 
+import tools.dynamia.domain.ValidationError;
+import tools.dynamia.integration.Containers;
+import tools.dynamia.integration.scheduling.SchedulerUtil;
+import tools.dynamia.modules.email.domain.EmailAccount;
+import tools.dynamia.modules.email.domain.EmailTemplate;
+import tools.dynamia.modules.email.services.EmailService;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,13 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import tools.dynamia.domain.ValidationError;
-import tools.dynamia.integration.Containers;
-import tools.dynamia.integration.scheduling.SchedulerUtil;
-import tools.dynamia.modules.email.domain.EmailAccount;
-import tools.dynamia.modules.email.domain.EmailTemplate;
-import tools.dynamia.modules.email.services.EmailService;
 
 /**
  * Email message helper. Use this class to create a setup an email message
@@ -63,6 +63,9 @@ public class EmailMessage implements Serializable {
     private boolean sended;
     private boolean templateOptional;
     private Long accountId;
+
+    private boolean notification;
+    private String notificationUuid;
 
     public EmailMessage() {
     }
@@ -263,4 +266,27 @@ public class EmailMessage implements Serializable {
         this.accountId = accountId;
     }
 
+    public boolean isNotification() {
+        return notification;
+    }
+
+    public void setNotification(boolean notification) {
+        this.notification = notification;
+    }
+
+    public String getNotificationUuid() {
+        return notificationUuid;
+    }
+
+    public void setNotificationUuid(String notificationUuid) {
+        this.notificationUuid = notificationUuid;
+    }
+
+    public Set<String> loadAllAddresses() {
+        Set<String> all = new HashSet<>();
+        all.addAll(getTos());
+        all.addAll(getCcs());
+        all.addAll(getBccs());
+        return all;
+    }
 }

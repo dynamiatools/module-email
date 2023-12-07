@@ -47,6 +47,7 @@ public class EmailAccount extends SimpleEntitySaaS {
     private boolean useTTLS;
     private boolean loginRequired;
     private boolean preferred;
+    private boolean notifications;
     private String enconding;
 
     private boolean smsEnabled;
@@ -197,5 +198,13 @@ public class EmailAccount extends SimpleEntitySaaS {
 
     public void setUseSSL(boolean useSSL) {
         this.useSSL = useSSL;
+    }
+
+    public boolean isNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(boolean notifications) {
+        this.notifications = notifications;
     }
 }

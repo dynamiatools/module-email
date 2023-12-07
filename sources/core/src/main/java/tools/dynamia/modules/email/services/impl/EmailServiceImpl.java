@@ -32,6 +32,7 @@ import tools.dynamia.commons.SimpleCache;
 import tools.dynamia.commons.StringUtils;
 import tools.dynamia.commons.logger.LoggingService;
 import tools.dynamia.commons.logger.SLF4JLoggingService;
+import tools.dynamia.domain.ValidationError;
 import tools.dynamia.domain.contraints.EmailValidator;
 import tools.dynamia.domain.query.QueryConditions;
 import tools.dynamia.domain.query.QueryParameters;
@@ -49,6 +50,7 @@ import tools.dynamia.modules.email.EmailServiceListener;
 import tools.dynamia.modules.email.EmailTemplateModelProvider;
 import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailAddress;
+import tools.dynamia.modules.email.domain.EmailMessageLog;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.modules.email.services.EmailService;
 import tools.dynamia.modules.saas.api.AccountServiceAPI;
@@ -61,6 +63,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 /**
@@ -88,51 +91,85 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
     }
 
     public Future<EmailSendResult> send(final EmailMessage mailMessage) {
-        return SchedulerUtil.runWithResult(new TaskWithResult<>() {
+        try {
 
-            @Override
-            public EmailSendResult doWorkWithResult() {
-                return sendAndWait(mailMessage);
-            }
-        });
+
+            loadEmailAccount(mailMessage);
+            return SchedulerUtil.runWithResult(new TaskWithResult<>() {
+
+                @Override
+                public EmailSendResult doWorkWithResult() {
+                    return sendAndWait(mailMessage);
+                }
+            });
+
+        } catch (ValidationError e) {
+            return CompletableFuture.completedFuture(new EmailSendResult(mailMessage, false, e.getMessage()));
+        }
     }
 
     @Override
     public EmailSendResult sendAndWait(final EmailMessage mailMessage) {
+        EmailSendResult result = null;
 
-        EmailAccount account = mailMessage.getMailAccount();
-        if (account == null) {
-            account = mailMessage.getAccountId() != null ? getPreferredEmailAccount(mailMessage.getAccountId()) : getPreferredEmailAccount();
-        }
-
-        if (account == null) {
-            logger.warn("No email account to send " + mailMessage);
-            return new EmailSendResult(mailMessage, false, "No email account to sended");
-        }
-
-        if (mailMessage.getTemplate() == null && mailMessage.getTemplateName() != null
-                && !mailMessage.getTemplateName().isEmpty()) {
-            mailMessage.setTemplate(getTemplateByName(mailMessage.getTemplateName()));
-        }
-
-        if (mailMessage.getTemplate() != null && !mailMessage.getTemplate().isEnabled()) {
-            if (mailMessage.isTemplateOptional()) {
-                mailMessage.setTemplate(null);
-            } else {
-                String msg = "Template " + mailMessage.getTemplate().getName() + " is not Enabled";
-                logger.warn(msg);
-                return new EmailSendResult(mailMessage, false, msg);
-            }
-        }
-
-
-        logger.info("Sending e-mail " + mailMessage);
         try {
-            return processAndSendEmail(mailMessage, account);
+            EmailAccount emailAccount = loadEmailAccount(mailMessage);
+
+            if (mailMessage.getTemplate() == null && mailMessage.getTemplateName() != null
+                    && !mailMessage.getTemplateName().isEmpty()) {
+                mailMessage.setTemplate(getTemplateByName(mailMessage.getTemplateName(), true, emailAccount.getAccountId()));
+            }
+
+            if (mailMessage.getTemplate() != null && !mailMessage.getTemplate().isEnabled()) {
+                if (mailMessage.isTemplateOptional()) {
+                    mailMessage.setTemplate(null);
+                } else {
+                    String msg = "Template " + mailMessage.getTemplate().getName() + " is not Enabled";
+                    logger.warn(msg);
+                    result = new EmailSendResult(mailMessage, false, msg);
+                }
+            }
+
+            if (result == null) {
+                logger.info("Sending e-mail " + mailMessage);
+                result = processAndSendEmail(mailMessage, emailAccount);
+            }
+        } catch (ValidationError e) {
+            result = new EmailSendResult(mailMessage, false, e.getMessage());
         } catch (TaskException e) {
             logger.error("Error sending email task", e);
-            return new EmailSendResult(mailMessage, e);
+            result = new EmailSendResult(mailMessage, e);
         }
+        logEmailResult(result);
+        return result;
+    }
+
+    private void logEmailResult(EmailSendResult result) {
+        var log = new EmailMessageLog(result.getMessage());
+        log.save();
+
+    }
+
+    private EmailAccount loadEmailAccount(EmailMessage mailMessage) {
+        if (mailMessage.getAccountId() == null) {
+            mailMessage.setAccountId(accountServiceAPI.getCurrentAccountId());
+        }
+
+        EmailAccount emailAccount = mailMessage.getMailAccount();
+        if (emailAccount == null && mailMessage.isNotification()) {
+            emailAccount = mailMessage.getAccountId() != null ? getNotificationEmailAccount(mailMessage.getAccountId()) : getNotificationEmailAccount();
+        }
+
+        if (emailAccount == null) {
+            emailAccount = mailMessage.getAccountId() != null ? getPreferredEmailAccount(mailMessage.getAccountId()) : getPreferredEmailAccount();
+        }
+
+        if (emailAccount == null) {
+            throw new ValidationError("No email account to send: " + mailMessage);
+        } else {
+            mailMessage.setMailAccount(emailAccount);
+        }
+        return emailAccount;
     }
 
 
@@ -142,7 +179,6 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
             if (mailMessage.getTemplate() != null) {
                 processTemplate(mailMessage);
             }
-
 
             fireOnMailProcessing(mailMessage);
 
@@ -238,6 +274,30 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
         return account;
     }
 
+
+    public EmailAccount getNotificationEmailAccount() {
+        return getNotificationEmailAccount(accountServiceAPI.getCurrentAccountId());
+    }
+
+    public EmailAccount getNotificationEmailAccount(Long accountId) {
+        QueryParameters params = QueryParameters.with("notifications", true);
+        if (accountId != null) {
+            params.add("accountId", accountId);
+        }
+
+        EmailAccount account = crudService.findSingle(EmailAccount.class, params);
+        if (account == null) {
+            logger.warn("There is not a notifications email account, trying to get System Account email account ");
+            Long systemAccountId = accountServiceAPI.getSystemAccountId();
+            if (systemAccountId != null) {
+                account = crudService.findSingle(EmailAccount.class,
+                        QueryParameters.with("accountId", systemAccountId).add("notifications", true));
+            }
+        }
+        return account;
+    }
+
+
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void setPreferredEmailAccount(EmailAccount account) {
@@ -247,20 +307,28 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
     @Override
     public EmailTemplate getTemplateByName(String name, boolean autocreate) {
-        EmailTemplate template = crudService.findSingle(EmailTemplate.class, "name", name);
+        return getTemplateByName(name, autocreate, accountServiceAPI.getCurrentAccountId());
+    }
+
+    @Override
+    public EmailTemplate getTemplateByName(String name, boolean autocreate, Long accountId) {
+        EmailTemplate template = crudService.findSingle(EmailTemplate.class, QueryParameters.with("accountId", accountId)
+                .add("name", QueryConditions.eq(name)));
+
         if (template == null) {
             logger.warn("There is not a template with name " + name + ", trying to get System Account template ");
             Long systemAccountId = accountServiceAPI.getSystemAccountId();
             if (systemAccountId != null) {
                 template = crudService.findSingle(EmailTemplate.class,
-                        QueryParameters.with("accountId", systemAccountId).add("name", name));
+                        QueryParameters.with("accountId", systemAccountId)
+                                .add("name", QueryConditions.eq(name)));
             }
         }
 
         if (template == null && autocreate) {
             template = new EmailTemplate();
             template.setName(name);
-            template.setAccountId(accountServiceAPI.getCurrentAccountId());
+            template.setAccountId(accountId);
             template.setEnabled(false);
             template.setContent("<empty>");
             template.setSubject(name);
