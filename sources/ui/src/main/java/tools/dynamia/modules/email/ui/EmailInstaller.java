@@ -28,6 +28,9 @@ import tools.dynamia.navigation.Module;
 import tools.dynamia.navigation.ModuleProvider;
 import tools.dynamia.navigation.PageGroup;
 
+/**
+ * The EmailInstaller class is responsible for providing the email module for navigation.
+ */
 @Component("EmailModule")
 public class EmailInstaller implements ModuleProvider {
 

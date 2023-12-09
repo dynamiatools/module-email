@@ -28,12 +28,23 @@ public class OTPSendResult {
     private String cause;
     private String smsId;
 
+    /**
+     * Represents the result of an OTP (One-Time Password) sending operation.
+     */
     public OTPSendResult(OTPMessage message, boolean sended, String reason) {
         this.message = message;
         this.sended = sended;
         this.cause = reason;
     }
 
+    /**
+     * Represents the result of an OTP (One-Time Password) sending operation.
+     *
+     * @param message The OTPMessage object related to the result.
+     * @param sended  Whether the OTP message was successfully sent or not.
+     * @param smsId   The ID of the sent SMS message (if applicable).
+     * @param reason  The reason for the result (e.g., "Sended").
+     */
     public OTPSendResult(OTPMessage message, boolean sended,String smsId, String reason) {
         this.message = message;
         this.sended = sended;
@@ -41,6 +52,14 @@ public class OTPSendResult {
         this.cause = reason;
     }
 
+    /**
+     * Represents the result of an OTP (One-Time Password) sending operation.
+     *
+     * @param message   The OTPMessage object related to the result.
+     * @param exception The exception that occurred during the OTP sending operation. If no exception occurred, this parameter can be null.
+     *
+     * @see OTPMessage
+     */
     public OTPSendResult(OTPMessage message, Exception exception) {
         this.message = message;
         this.sended = false;

@@ -19,10 +19,25 @@ package tools.dynamia.modules.email;
 
 import java.util.Map;
 
+/**
+ * Represents a provider for email template models.
+ */
 public interface EmailTemplateModelProvider {
 
+	/**
+	 *
+	 * Retrieves the source of the email template model provider.
+	 *
+	 * @return the source of the email template model provider
+	 */
 	String getSource();
 
+	/**
+	 * Retrieves the model for an email message.
+	 *
+	 * @param message the email message for which to retrieve the model
+	 * @return the model for the email message
+	 */
 	Map<String, Object> getModel(EmailMessage message);
 
 }

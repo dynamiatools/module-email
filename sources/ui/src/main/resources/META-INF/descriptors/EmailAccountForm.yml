@@ -16,7 +16,7 @@ fields:
     label: TTLS
   useSSL:
     label: SSL
-
+  notifications:
 
 
 

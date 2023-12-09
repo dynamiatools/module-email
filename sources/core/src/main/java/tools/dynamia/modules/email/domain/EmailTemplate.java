@@ -28,6 +28,9 @@ import jakarta.persistence.Table;
 import tools.dynamia.domain.contraints.NotEmpty;
 import tools.dynamia.modules.saas.jpa.SimpleEntitySaaS;
 
+/**
+ * Class representing an email template.
+ */
 @Entity
 @Table(name = "email_templates")
 public class EmailTemplate extends SimpleEntitySaaS {

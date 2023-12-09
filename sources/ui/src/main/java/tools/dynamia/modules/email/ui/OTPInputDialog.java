@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a dialog window for entering an OTP (One-Time Password).
+ */
 public class OTPInputDialog extends Window {
 
 

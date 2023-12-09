@@ -27,6 +27,9 @@ import tools.dynamia.integration.ms.MessageChannel;
 import tools.dynamia.integration.ms.MessageService;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 
+/**
+ * Configuration class for email-related beans.
+ */
 @Configuration
 public class EmailConfig {
 

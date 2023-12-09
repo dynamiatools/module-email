@@ -21,6 +21,7 @@ fields:
 
   useSSL:
     label: SSL
+  notifications:
 
   smsRegion:
     label: Region

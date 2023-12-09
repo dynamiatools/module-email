@@ -11,6 +11,15 @@ import java.util.function.Function;
  */
 public class OTPMessage implements Serializable {
 
+    /**
+     * Generates an OTPMessage for sending an SMS with the specified target phone number, OTP type,
+     * and content generator function.
+     *
+     * @param targetPhoneNumber   The phone number to which the OTP message will be sent.
+     * @param type                The type of OTP to be generated (numeric or text).
+     * @param contentGenerator    The function that generates the content of the OTP message.
+     * @return The generated OTPMessage for sending the SMS.
+     */
     public static OTPMessage sms(String targetPhoneNumber, OTPType type, Function<String, String> contentGenerator) {
         var msg = new OTPMessage();
         msg.sendSMS = true;
@@ -24,6 +33,15 @@ public class OTPMessage implements Serializable {
         return msg;
     }
 
+    /**
+     * Generates an OTPMessage for sending an email with the specified target email address, OTP type, email subject, and content generator function.
+     *
+     * @param targetEmail         The email address to which the OTP message will be sent.
+     * @param type                The type of OTP to be generated (numeric or text).
+     * @param emailSubject        The subject of the email.
+     * @param contentGenerator    The function that generates the content of the OTP message.
+     * @return The generated OTPMessage for sending the email.
+     */
     public static OTPMessage email(String targetEmail, OTPType type, String emailSubject, Function<String, String> contentGenerator) {
         var msg = new OTPMessage();
         msg.sendEmail = true;
@@ -48,6 +66,9 @@ public class OTPMessage implements Serializable {
     private Long accountId;
 
 
+    /**
+     * Represents an OTP (One-Time Password) message that can be sent via SMS or email.
+     */
     public OTPMessage() {
     }
 

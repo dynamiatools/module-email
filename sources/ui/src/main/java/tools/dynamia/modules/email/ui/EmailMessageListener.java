@@ -27,6 +27,10 @@ import tools.dynamia.modules.email.services.EmailService;
 
 import java.util.Map;
 
+/**
+ * The EmailMessageListener class is a message listener that listens to messages
+ * from the email channel and sends email messages accordingly.
+ */
 @Listener
 @MessageChannelExchange(channel = EmailConfig.EMAIL_CHANNEL, broadcastReceive = false)
 public class EmailMessageListener implements MessageListener<Message> {

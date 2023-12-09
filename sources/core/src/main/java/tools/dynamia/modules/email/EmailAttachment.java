@@ -19,6 +19,9 @@ package tools.dynamia.modules.email;
 
 import java.io.File;
 
+/**
+ * Represents an attachment in an email.
+ */
 public class EmailAttachment {
 
 	private String name;

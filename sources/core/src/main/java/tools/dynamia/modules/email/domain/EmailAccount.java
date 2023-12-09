@@ -25,7 +25,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 /**
- * @author Mario Serrano Leones
+ * Represents an email account.
  */
 @Entity
 @Table(name = "email_accounts")

@@ -19,6 +19,7 @@
 package tools.dynamia.modules.email;
 
 import tools.dynamia.domain.ValidationError;
+import tools.dynamia.domain.contraints.EmailValidator;
 import tools.dynamia.integration.Containers;
 import tools.dynamia.integration.scheduling.SchedulerUtil;
 import tools.dynamia.modules.email.domain.EmailAccount;
@@ -35,11 +36,16 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Email message helper. Use this class to create a setup an email message
- *
- * @author Mario Serrano Leones
+ * Represents an email message that can be sent with various recipients, subject, content, and attachments.
+ * The email message can also be associated with an email account, email template, and other additional properties.
  */
 public class EmailMessage implements Serializable {
+
+
+    public static boolean isEmailAddress(String email) {
+        return email != null && !email.isBlank() && new EmailValidator().isValid(email);
+    }
+
 
     /**
      *
@@ -67,14 +73,29 @@ public class EmailMessage implements Serializable {
     private boolean notification;
     private String notificationUuid;
 
+    /**
+     * Represents an email message that can be sent.
+     */
     public EmailMessage() {
     }
 
+    /**
+     * Represents an email message that can be sent.
+     *
+     * @param template the email template to be used for creating the message
+     */
     public EmailMessage(EmailTemplate template) {
         super();
         this.template = template;
     }
 
+    /**
+     * Represents an email message that can be sent.
+     *
+     * @param to      the email address of the recipient
+     * @param subject the subject of the email
+     * @param content the content of the email
+     */
     public EmailMessage(String to, String subject, String content) {
         this.to = to;
         this.subject = subject;
@@ -93,6 +114,11 @@ public class EmailMessage implements Serializable {
         return templateName;
     }
 
+    /**
+     * Sets the template name for the email message.
+     *
+     * @param templateName the name of the template to be used for creating the email message
+     */
     public void setTemplateName(String templateName) {
         this.templateName = templateName;
     }
@@ -109,6 +135,11 @@ public class EmailMessage implements Serializable {
         return mailAccount;
     }
 
+    /**
+     * Sets the mail account for the email message.
+     *
+     * @param emailAccount the email account to be set as the sender of the email message
+     */
     public void setMailAccount(EmailAccount emailAccount) {
         this.mailAccount = emailAccount;
     }

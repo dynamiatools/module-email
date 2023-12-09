@@ -117,5 +117,10 @@ public interface EmailService {
      */
     EmailAddress getEmailAddress(String address);
 
+    /**
+     * Clears the mail sender cache for the specified email account.
+     *
+     * @param account The email account for which to clear the cache.
+     */
     void clearCache(EmailAccount account);
 }
