@@ -17,12 +17,11 @@
 
 package tools.dynamia.modules.email.domain;
 
-import tools.dynamia.modules.saas.jpa.BaseEntitySaaS;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import tools.dynamia.modules.saas.jpa.BaseEntitySaaS;
 
 @Entity
 @Table(name = "email_addresses")
@@ -81,5 +80,10 @@ public class EmailAddress extends BaseEntitySaaS {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    @Override
+    public String toString() {
+        return getEmail();
     }
 }

@@ -17,10 +17,9 @@
 
 package tools.dynamia.modules.email.domain;
 
-import tools.dynamia.modules.saas.jpa.BaseEntitySaaS;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import tools.dynamia.modules.saas.jpa.BaseEntitySaaS;
 
 @Entity
 @Table(name = "email_sms_log")
@@ -68,5 +67,10 @@ public class SMSMessageLog extends BaseEntitySaaS {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    @Override
+    public String toString() {
+        return getPhoneNumber();
     }
 }
