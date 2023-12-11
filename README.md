@@ -29,7 +29,7 @@ Add the following dependencies to project classpath
 <dependency>
     <groupId>tools.dynamia.modules</groupId>
     <artifactId>tools.dynamia.modules.email</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.2</version>
 </dependency>
 ```
 
@@ -38,7 +38,7 @@ Add the following dependencies to project classpath
 <dependency>
     <groupId>tools.dynamia.modules</groupId>
     <artifactId>tools.dynamia.modules.email.ui</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.2</version>
 </dependency>
 
 ```
@@ -46,8 +46,8 @@ Add the following dependencies to project classpath
 **Gradle**
 
 ```groovy
-compile 'tools.dynamia.modules:tools.dynamia.modules.email:3.0.0'
-compile 'tools.dynamia.modules:tools.dynamia.modules.email.ui:3.0.0'
+compile 'tools.dynamia.modules:tools.dynamia.modules.email:3.0.2'
+compile 'tools.dynamia.modules:tools.dynamia.modules.email.ui:3.0.2'
 ```
 
 ## Usage
@@ -60,10 +60,10 @@ Main services are `EmailService` to send `EmailMessage` and `SMSService` to send
 class SomeService { //spring service
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     @Autowired
-    SMSService smsService;
+    private SMSService smsService;
 
     public void sendNotification(Person person, String message) {
 
