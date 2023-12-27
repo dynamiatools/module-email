@@ -9,8 +9,7 @@ fields:
   enabled:
 
   to:
-    params:
-      span: 2
+  replyTo:
   cc:
   bcc:
   subject:

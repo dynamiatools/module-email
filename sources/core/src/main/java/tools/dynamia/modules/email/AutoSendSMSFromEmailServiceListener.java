@@ -17,24 +17,27 @@
 
 package tools.dynamia.modules.email;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import tools.dynamia.commons.logger.LoggingService;
 import tools.dynamia.commons.logger.SLF4JLoggingService;
-import tools.dynamia.domain.ValidationError;
 import tools.dynamia.integration.sterotypes.Listener;
 import tools.dynamia.modules.email.domain.EmailAccount;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.modules.email.services.SMSService;
-import tools.dynamia.templates.VelocityTemplateEngine;
+import tools.dynamia.templates.TemplateEngine;
 
 @Listener
 public class AutoSendSMSFromEmailServiceListener extends EmailServiceListenerAdapter {
 
-    @Autowired
-    private SMSService smsService;
+
+    private final SMSService smsService;
+    private final TemplateEngine templateEngine;
 
     private LoggingService logger = new SLF4JLoggingService(AutoSendSMSFromEmailServiceListener.class);
 
+    public AutoSendSMSFromEmailServiceListener(SMSService smsService, TemplateEngine templateEngine) {
+        this.smsService = smsService;
+        this.templateEngine = templateEngine;
+    }
 
     @Override
     public void onMailSended(EmailMessage message) {
@@ -68,6 +71,6 @@ public class AutoSendSMSFromEmailServiceListener extends EmailServiceListenerAda
     }
 
     private String parse(EmailMessage message, String text) {
-        return new VelocityTemplateEngine().evaluate(text, message.getTemplateModel());
+        return templateEngine.evaluate(text, message.getTemplateModel());
     }
 }

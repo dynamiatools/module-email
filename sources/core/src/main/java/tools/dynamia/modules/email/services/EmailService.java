@@ -52,6 +52,10 @@ public interface EmailService {
      */
     Future<EmailSendResult> send(String to, String subject, String content);
 
+    EmailAccount getNotificationEmailAccount();
+
+    EmailAccount getNotificationEmailAccount(Long accountId);
+
     /**
      * Setup preferred email account in current SaaS account
      *

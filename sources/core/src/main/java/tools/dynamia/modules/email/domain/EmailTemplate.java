@@ -55,6 +55,10 @@ public class EmailTemplate extends SimpleEntitySaaS {
 	private String cc;
 	@Column(length = 2000, name = "templateBcc")
 	private String bcc;
+
+	@Column(length = 2000, name = "templateReplyTo")
+	private String replyTo;
+
 	@OneToOne
 	private EmailTemplate parent;
 	private boolean sendSMS;
@@ -160,5 +164,13 @@ public class EmailTemplate extends SimpleEntitySaaS {
 
 	public void setSendSMS(boolean sendSMS) {
 		this.sendSMS = sendSMS;
+	}
+
+	public String getReplyTo() {
+		return replyTo;
+	}
+
+	public void setReplyTo(String replyTo) {
+		this.replyTo = replyTo;
 	}
 }

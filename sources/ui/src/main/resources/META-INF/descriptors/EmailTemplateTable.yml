@@ -8,8 +8,8 @@ fields:
   enabled:
   description:
   to:
+  replyTo:
   cc:
   bcc:
   sendSMS:
     label: Send SMS
-   

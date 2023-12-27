@@ -19,9 +19,6 @@
 package tools.dynamia.modules.email.services.impl;
 
 import jakarta.mail.internet.MimeMessage;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -54,10 +51,11 @@ import tools.dynamia.modules.email.domain.EmailMessageLog;
 import tools.dynamia.modules.email.domain.EmailTemplate;
 import tools.dynamia.modules.email.services.EmailService;
 import tools.dynamia.modules.saas.api.AccountServiceAPI;
+import tools.dynamia.templates.TemplateEngine;
 
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -74,14 +72,18 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
     private final SimpleCache<Long, MailSender> MAIL_SENDERS = new SimpleCache<>();
 
-    @Autowired
-    private CrudService crudService;
 
-    @Autowired
-    private AccountServiceAPI accountServiceAPI;
+    private final TemplateEngine templateEngine;
+    private final CrudService crudService;
+    private final AccountServiceAPI accountServiceAPI;
 
-    private VelocityEngine velocityEngine = new VelocityEngine();
     private EmailValidator emailValidator = new EmailValidator();
+
+    public EmailServiceImpl(TemplateEngine templateEngine, CrudService crudService, AccountServiceAPI accountServiceAPI) {
+        this.templateEngine = templateEngine;
+        this.crudService = crudService;
+        this.accountServiceAPI = accountServiceAPI;
+    }
 
     private final LoggingService logger = new SLF4JLoggingService(EmailService.class);
 
@@ -275,10 +277,12 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
     }
 
 
+    @Override
     public EmailAccount getNotificationEmailAccount() {
         return getNotificationEmailAccount(accountServiceAPI.getCurrentAccountId());
     }
 
+    @Override
     public EmailAccount getNotificationEmailAccount(Long accountId) {
         QueryParameters params = QueryParameters.with("notifications", true);
         if (accountId != null) {
@@ -384,9 +388,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
     }
 
     public void processTemplate(EmailMessage message) {
-        if (velocityEngine == null) {
-            throw new EmailServiceException("There is not a VelocityEngine configured to process any template");
-        }
+
 
         if (message.getTemplate() == null) {
             throw new EmailServiceException(message + " has no template to process");
@@ -394,7 +396,8 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
 
         EmailTemplate template = message.getTemplate();
         logger.info("Processing template " + template);
-        VelocityContext context = new VelocityContext();
+
+        Map<String, Object> context = new HashMap<>();
 
         // Load model from providers
         if (message.getSource() != null && !message.getSource().isEmpty()) {
@@ -402,9 +405,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
                     .forEach(p -> {
                         Map<String, Object> model = p.getModel(message);
                         if (model != null) {
-                            for (Entry<String, Object> entry : model.entrySet()) {
-                                context.put(entry.getKey(), entry.getValue());
-                            }
+                            context.putAll(model);
                         }
                     });
             ;
@@ -453,16 +454,23 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
                 }
             }
         }
+
+        String replyTo = parse(template.getReplyTo(), context);
+        if (replyTo != null && !replyTo.isBlank()) {
+            message.setReplyTo(replyTo);
+        }
     }
 
-    private String parse(String templateString, VelocityContext context) {
-        StringWriter writer = new StringWriter();
-        velocityEngine.evaluate(context, writer, "log", templateString);
-        return writer.toString();
+    private String parse(String templateString, Map<String, Object> context) {
+        if (templateString != null && !templateString.isBlank()) {
+            return templateEngine.evaluate(templateString, context);
+        } else {
+            return templateString;
+        }
     }
 
-    private String[] parseDestination(String destination, VelocityContext context) {
-        if (destination != null && !destination.isEmpty()) {
+    private String[] parseDestination(String destination, Map<String, Object> context) {
+        if (destination != null && !destination.isBlank()) {
             destination = parse(destination, context);
             if (destination.contains(",")) {
                 return StringUtils.split(destination, ",");
