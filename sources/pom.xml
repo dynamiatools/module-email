@@ -23,7 +23,7 @@
     <artifactId>tools.dynamia.modules.email.parent</artifactId>
     <name>DynamiaModules - Email Parent</name>
     <packaging>pom</packaging>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
     <description>DynamiaTools extension for sending async emails (SMTP) and sms messages (AWS SNS)</description>
     <inceptionYear>2018</inceptionYear>
     <url>https://www.dynamia.tools/modules/email</url>

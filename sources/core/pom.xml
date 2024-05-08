@@ -22,12 +22,12 @@
     <parent>
         <artifactId>tools.dynamia.modules.email.parent</artifactId>
         <groupId>tools.dynamia.modules</groupId>
-        <version>3.1.0</version>
+        <version>3.1.1</version>
     </parent>
 
     <artifactId>tools.dynamia.modules.email</artifactId>
     <name>DynamiaModules - Email</name>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
     <url>https://www.dynamiasoluciones.com</url>
 
 
