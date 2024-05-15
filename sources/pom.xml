@@ -94,20 +94,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>1.20</version>
-                <configuration>
-                    <verbose>false</verbose>
-                    <licenseName>lgpl_v3</licenseName>
-                    <roots>
-                        <root>src/main/java</root>
-                        <root>src/main/groovy</root>
-                        <root>src/test</root>
-                    </roots>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.5.0</version>
