@@ -68,7 +68,7 @@ import java.util.concurrent.Future;
  * @author Mario Serrano Leones
  */
 @Service
-public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> implements EmailService {
+public class EmailServiceImpl implements EmailService {
 
     private final SimpleCache<Long, MailSender> MAIL_SENDERS = new SimpleCache<>();
 
@@ -95,10 +95,8 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
     public Future<EmailSendResult> send(final EmailMessage mailMessage) {
         try {
 
-
             loadEmailAccount(mailMessage);
             return SchedulerUtil.runWithResult(new TaskWithResult<>() {
-
                 @Override
                 public EmailSendResult doWorkWithResult() {
                     return sendAndWait(mailMessage);
@@ -509,12 +507,7 @@ public class EmailServiceImpl extends CrudServiceListenerAdapter<EmailAccount> i
         }
     }
 
-    @Override
-    public void afterUpdate(EmailAccount entity) {
-        if (entity != null) {
-            clearCache(entity);
-        }
-    }
+
 
     @Override
     public void logEmailAddress(EmailAccount emailAccount, EmailMessage message) {
