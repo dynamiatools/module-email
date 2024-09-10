@@ -1,6 +1,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/tools.dynamia.modules/tools.dynamia.modules.email)](https://search.maven.org/search?q=tools.dynamia.modules.email)
 ![Java Version Required](https://img.shields.io/badge/java-17-blue)
 [![Maven Build](https://github.com/dynamiatools/module-email/actions/workflows/maven.yml/badge.svg)](https://github.com/dynamiatools/module-email/actions/workflows/maven.yml)
+[![Release and Deploy](https://github.com/dynamiatools/module-email/actions/workflows/release.yml/badge.svg)](https://github.com/dynamiatools/module-email/actions/workflows/release.yml)
 
 # Email and SMS Module
 
