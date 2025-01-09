@@ -17,16 +17,13 @@
 
 package tools.dynamia.modules.email.services.impl;
 
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.sns.AmazonSNSAsync;
-import com.amazonaws.services.sns.AmazonSNSAsyncClientBuilder;
-import com.amazonaws.services.sns.model.AmazonSNSException;
-import com.amazonaws.services.sns.model.MessageAttributeValue;
-import com.amazonaws.services.sns.model.PublishRequest;
-import com.amazonaws.services.sns.model.PublishResult;
+
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
+import software.amazon.awssdk.services.sns.model.PublishRequest;
 import tools.dynamia.domain.services.AbstractService;
 import tools.dynamia.integration.Containers;
 import tools.dynamia.modules.email.SMSMessage;
@@ -44,58 +41,61 @@ public class SMSServiceImpl extends AbstractService implements SMSService {
     public String send(SMSMessage message) {
         validate(message);
 
-        AmazonSNSAsync snsClient = buildSNSClient(message);
+        try (var snsClient = buildSNSClient(message)) {
 
 
-        Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
-        if (message.isTransactional()) {
-            smsAttributes.put("AWS.SNS.SMS.SMSType", new MessageAttributeValue()
-                    .withStringValue("Transactional")
-                    .withDataType("String"));
-        }
+            Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
+            if (message.isTransactional()) {
+                smsAttributes.put("AWS.SNS.SMS.SMSType", MessageAttributeValue.builder()
+                        .stringValue("Transactional")
+                        .dataType("String").build());
+            }
 
-        if (message.getSenderID() != null && !message.getSenderID().isEmpty()) {
-            smsAttributes.put("AWS.SNS.SMS.SenderID", new MessageAttributeValue()
-                    .withStringValue(message.getSenderID()) //The sender ID shown on the device.
-                    .withDataType("String"));
-        }
-
-
-        log("Sending SMS to " + message.getPhoneNumber());
-        fireSendingListener(message);
-        try {
-            PublishResult result = snsClient.publish(new PublishRequest()
-                    .withMessage(message.getText())
-                    .withPhoneNumber(message.getPhoneNumber())
-                    .withMessageAttributes(smsAttributes));
-
-            log("SMS Result: " + result);
-            log("Creating log for sms message " + message.getPhoneNumber());
-            new SMSMessageLog(message.getPhoneNumber(),
-                    message.getText(), result.getMessageId(),
-                    message.getAccountId())
-                    .save();
+            if (message.getSenderID() != null && !message.getSenderID().isEmpty()) {
+                smsAttributes.put("AWS.SNS.SMS.SenderID", MessageAttributeValue.builder()
+                        .stringValue(message.getSenderID())
+                        .dataType("String").build());
+            }
 
 
-            message.setResult(result.getMessageId());
-            message.setMessageId(result.getMessageId());
-            message.setSended(true);
-            log("SMS Sended - " + message.getPhoneNumber() + "  message id: " + message.getResult());
-            fireSendedListener(message);
-            return message.getResult();
-        } catch (AmazonSNSException ex) {
-            message.setResult(ex.getMessage());
-            log("Error sending sms to " + message.getPhoneNumber() + ": " + ex.getMessage(), ex);
-            return null;
+            log("Sending SMS to " + message.getPhoneNumber());
+            fireSendingListener(message);
+            try {
+                var request = PublishRequest.builder()
+                        .message(message.getText())
+                        .phoneNumber(message.getPhoneNumber())
+                        .messageAttributes(smsAttributes)
+                        .build();
+
+                var result = snsClient.publish(request);
+
+                log("SMS Result: " + result);
+                log("Creating log for sms message " + message.getPhoneNumber());
+                new SMSMessageLog(message.getPhoneNumber(),
+                        message.getText(), result.messageId(),
+                        message.getAccountId())
+                        .save();
+
+
+                message.setResult(result.messageId());
+                message.setMessageId(result.messageId());
+                message.setSended(true);
+                log("SMS Sended - " + message.getPhoneNumber() + "  message id: " + message.getResult());
+                fireSendedListener(message);
+                return message.getResult();
+            } catch (Exception ex) {
+                message.setResult(ex.getMessage());
+                log("Error sending sms to " + message.getPhoneNumber() + ": " + ex.getMessage(), ex);
+                return null;
+            }
         }
     }
 
-    private AmazonSNSAsync buildSNSClient(SMSMessage message) {
-        AWSCredentialsProvider credentials = new AWSStaticCredentialsProvider(new BasicAWSCredentials(message.getUsername(), message.getPassword()));
-
-        return AmazonSNSAsyncClientBuilder.standard()
-                .withCredentials(credentials)
-                .withRegion(message.getRegion())
+    private SnsClient buildSNSClient(SMSMessage message) {
+        var credentials = AwsBasicCredentials.create(message.getUsername(), message.getPassword());
+        return SnsClient.builder()
+                .credentialsProvider(() -> credentials)
+                .region(Region.of(message.getRegion()))
                 .build();
     }
 

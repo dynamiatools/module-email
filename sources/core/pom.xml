@@ -22,12 +22,12 @@
     <parent>
         <artifactId>tools.dynamia.modules.email.parent</artifactId>
         <groupId>tools.dynamia.modules</groupId>
-        <version>3.1.2</version>
+        <version>3.2.0</version>
     </parent>
 
     <artifactId>tools.dynamia.modules.email</artifactId>
     <name>DynamiaModules - Email</name>
-    <version>3.1.2</version>
+    <version>3.2.0</version>
     <url>https://www.dynamiasoluciones.com</url>
 
 
@@ -77,9 +77,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-sns</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sns</artifactId>
             <version>${aws.version}</version>
         </dependency>
+
     </dependencies>
 </project>
