@@ -23,7 +23,7 @@
     <artifactId>tools.dynamia.modules.email.parent</artifactId>
     <name>DynamiaModules - Email Parent</name>
     <packaging>pom</packaging>
-    <version>3.2.0</version>
+    <version>3.2.1</version>
     <description>DynamiaTools extension for sending async emails (SMTP) and sms messages (AWS SNS)</description>
     <inceptionYear>2018</inceptionYear>
     <url>https://www.dynamia.tools/modules/email</url>
@@ -56,12 +56,12 @@
 
     <properties>
         <java.version>17</java.version>
-        <dynamiatools.version>5.3.1</dynamiatools.version>
-        <saas.version>3.2.0</saas.version>
+        <dynamiatools.version>5.3.2</dynamiatools.version>
+        <saas.version>3.2.1</saas.version>
         <maven.compiler>3.13.0</maven.compiler>
         <source.encoding>UTF-8</source.encoding>
         <springboot.version>3.4.1</springboot.version>
-        <aws.version>2.29.47</aws.version>
+        <aws.version>2.30.6</aws.version>
     </properties>
 
     <modules>
@@ -85,7 +85,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
+                <version>1.7.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
