@@ -20,12 +20,12 @@
 	<parent>
 		<artifactId>tools.dynamia.modules.email.parent</artifactId>
 		<groupId>tools.dynamia.modules</groupId>
-		<version>3.2.1</version>
+		<version>3.3.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<name>DynamiaModules - Email UI</name>
 	<artifactId>tools.dynamia.modules.email.ui</artifactId>
-	<version>3.2.1</version>
+	<version>3.3.0</version>
 	<url>https://www.dynamiasoluciones.com</url>
 
 	<dependencies>
@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>tools.dynamia.modules</groupId>
 			<artifactId>tools.dynamia.modules.email</artifactId>
-			<version>3.2.1</version>
+			<version>3.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>tools.dynamia.zk.addons</groupId>
