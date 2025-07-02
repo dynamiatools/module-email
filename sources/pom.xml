@@ -23,7 +23,7 @@
     <artifactId>tools.dynamia.modules.email.parent</artifactId>
     <name>DynamiaModules - Email Parent</name>
     <packaging>pom</packaging>
-    <version>3.3.0</version>
+    <version>3.4.0</version>
     <description>DynamiaTools extension for sending async emails (SMTP) and sms messages (AWS SNS)</description>
     <inceptionYear>2018</inceptionYear>
     <url>https://www.dynamia.tools/modules/email</url>
@@ -55,13 +55,13 @@
     </scm>
 
     <properties>
-        <java.version>17</java.version>
-        <dynamiatools.version>5.3.6</dynamiatools.version>
-        <saas.version>3.3.0</saas.version>
-        <maven.compiler>3.13.0</maven.compiler>
+        <java.version>21</java.version>
+        <dynamiatools.version>5.4.0</dynamiatools.version>
+        <saas.version>3.4.0</saas.version>
+        <maven.compiler>3.14.0</maven.compiler>
         <source.encoding>UTF-8</source.encoding>
-        <springboot.version>3.4.4</springboot.version>
-        <aws.version>2.31.18</aws.version>
+        <springboot.version>3.5.3</springboot.version>
+        <aws.version>2.31.61</aws.version>
     </properties>
 
     <modules>
@@ -83,14 +83,13 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.7.0</version>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
                 </configuration>
             </plugin>
             <plugin>
@@ -128,19 +127,6 @@
 
     </dependencies>
 
-
-
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
