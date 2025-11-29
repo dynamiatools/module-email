@@ -1,7 +1,6 @@
 package tools.dynamia.modules.email.services.impl;
 
 import tools.dynamia.integration.scheduling.SchedulerUtil;
-import tools.dynamia.integration.scheduling.TaskWithResult;
 import tools.dynamia.integration.sterotypes.Service;
 import tools.dynamia.modules.email.EmailMessage;
 import tools.dynamia.modules.email.OTPMessage;
@@ -12,7 +11,7 @@ import tools.dynamia.modules.email.services.EmailService;
 import tools.dynamia.modules.email.services.OTPService;
 import tools.dynamia.modules.email.services.SMSService;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class OTPServiceImpl implements OTPService {
@@ -26,7 +25,7 @@ public class OTPServiceImpl implements OTPService {
     }
 
     @Override
-    public Future<OTPSendResult> send(OTPMessage message) {
+    public CompletableFuture<OTPSendResult> send(OTPMessage message) {
         final var emailAccount = message.getAccountId() != null ? emailService.getPreferredEmailAccount(message.getAccountId()) : emailService.getPreferredEmailAccount();
         final var emailMessage = buildEmailMessage(emailAccount, message);
         final var smsMessage = buildSMSMessage(emailAccount, message);
