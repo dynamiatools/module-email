@@ -88,11 +88,11 @@ public class EmailServiceImpl implements EmailService {
     private final LoggingService logger = new SLF4JLoggingService(EmailService.class);
 
     @Override
-    public Future<EmailSendResult> send(String to, String subject, String content) {
+    public CompletableFuture<EmailSendResult> send(String to, String subject, String content) {
         return send(new EmailMessage(to, subject, content));
     }
 
-    public Future<EmailSendResult> send(final EmailMessage mailMessage) {
+    public CompletableFuture<EmailSendResult> send(final EmailMessage mailMessage) {
         try {
 
             loadEmailAccount(mailMessage);

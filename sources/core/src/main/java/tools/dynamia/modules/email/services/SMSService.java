@@ -20,15 +20,27 @@ package tools.dynamia.modules.email.services;
 import tools.dynamia.modules.email.SMSMessage;
 
 /**
- * Simple SMS sender service
+ * Simple SMS sender service.
+ * <p>
+ * Defines the contract to dispatch SMS messages using the configured provider. Implementations
+ * are responsible for formatting, transport selection, and returning a provider-specific response
+ * string that may include tracking identifiers or delivery status notes.
+ * </p>
  */
 public interface SMSService {
 
     /**
      * Sends an SMS message.
+     * <p>
+     * Implementations should validate destination numbers and message length according to provider limits
+     * (e.g., GSM-7 vs. Unicode, segmentation). The returned value is the raw response from the underlying
+     * SMS provider and can be used for logging or troubleshooting.
+     * </p>
      *
-     * @param message the SMS message to be sent
-     * @return the response from the SMS service
+     * @param message The {@link SMSMessage} to be sent, containing destination number, text content, and optional metadata.
+     *                Must not be {@code null}.
+     * @return The response string from the SMS service/provider. The format depends on the implementation and provider;
+     * may include message ID or delivery status information.
      */
     String send(SMSMessage message);
 }
